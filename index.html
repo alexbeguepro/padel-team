@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padel Team Garage ⚡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <h1>Raquette Padel</h1>
+            <div class="subtitle">Road to Jules Marie</div>
+
+            <nav class="main-nav">
+                <button class="nav-btn active" onclick="switchView('garage')" id="nav-garage">Garage 🎾</button>
+                <button class="nav-btn" onclick="switchView('ranking')" id="nav-ranking">Classement 🏆</button>
+            </nav>
+
+            <div class="filter-wrapper" id="garage-filters">
+                <div class="filter-bar" id="filter-bar">
+                    <button class="filter-btn active" onclick="filterRackets('all')" id="btn-all">
+                        <span class="filter-dot" style="background: white;"></span>
+                        Tout le garage
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- VUE GARAGE -->
+        <section id="garage-view" class="view-section active">
+            <div class="racket-grid" id="racket-container">
+            </div>
+        </section>
+
+        <!-- VUE CLASSEMENT -->
+        <section id="ranking-view" class="view-section" style="display:none;">
+            <div class="ranking-container">
+                <div class="ranking-header">
+                    <div class="rank-col">#</div>
+                    <div class="player-col">Joueur</div>
+                    <div class="points-col">Points</div>
+                </div>
+                <div id="ranking-list" class="ranking-list">
+                    <!-- Ranking items will be injected here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-scroll-area">
+                <div class="modal-header">
+                    <div class="modal-img-wrapper">
+                        <div class="modal-img-container"><img id="m-img" class="modal-img" src=""></div>
+                        <div class="thumbs-container" id="m-thumbs"></div>
+                    </div>
+                    <div class="modal-info">
+                        <span id="m-tag" class="modal-tag">Niveau</span>
+                        <h2 id="m-title">Titre</h2>
+                        <p id="m-desc" style="color: #cbd5e1; line-height:1.8; margin-bottom:30px; font-weight: 300;">
+                        </p>
+
+                        <div class="tech-specs">
+                            <div class="tech-item"><strong>Poids</strong><span id="m-weight">-</span></div>
+                            <div class="tech-item"><strong>Forme</strong><span id="m-shape">-</span></div>
+                            <div class="tech-item"><strong>Mousse</strong><span id="m-foam">-</span></div>
+                            <div class="tech-item"><strong>Surface</strong><span id="m-surface">-</span></div>
+                        </div>
+
+                        <div style="display:flex; align-items:center;">
+                            <span id="m-price" style="font-size:2.5em; font-weight:800; color:white;">0 €</span>
+                            <a id="m-link" href="#" target="_blank" class="shop-btn">Voir l'offre</a>
+                        </div>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid var(--border-glass); padding-top: 30px;">
+                    <h3
+                        style="margin-top:0; margin-bottom: 25px; font-size: 1.2em; text-transform: uppercase; letter-spacing: 2px;">
+                        ⚡ Performance</h3>
+                    <div class="stats-grid" id="m-stats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
