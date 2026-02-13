@@ -1,0 +1,25 @@
+{
+  "name": "padel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scrape": "node scripts/scrape_rankings.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexbeguepro/padel-team.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/alexbeguepro/padel-team/issues"
+  },
+  "homepage": "https://github.com/alexbeguepro/padel-team#readme",
+  "dependencies": {
+    "puppeteer": "^24.37.3"
+  }
+}

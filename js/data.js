@@ -172,10 +172,10 @@ const profilesData = [
 // DONNÉES CLASSEMENT JULES MARIE LEAGUE
 // ===============================================
 const rankingData = [
-    { name: "Matthias", nationalRank: 76603, points: 13 },
-    { name: "Tapin", nationalRank: 76603, points: 13 },
-    { name: "Alex", nationalRank: 80194, points: 11 },
-    { name: "Erwan", nationalRank: 84830, points: 9 },
-    { name: "Elouan", nationalRank: 102907, points: 2 },
-    { name: "Mateo", nationalRank: null, points: 0 }
+    { name: "Matthias", firstName: "Matthias", lastName: "Bossard", nationalRank: 76603, points: 13 },
+    { name: "Tapin", firstName: "Mathys", lastName: "Tapin", nationalRank: 76603, points: 13 },
+    { name: "Alex", firstName: "Alex", lastName: "Begue", nationalRank: 80194, points: 11 },
+    { name: "Erwan", firstName: "Erwan", lastName: "Hillion", nationalRank: 84830, points: 9 },
+    { name: "Elouan", firstName: "Elouan", lastName: "Boisseau", nationalRank: 102907, points: 2 },
+    { name: "Mateo", firstName: "Mateo", lastName: "", nationalRank: null, points: 0 }
 ];
