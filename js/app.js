@@ -5,9 +5,39 @@ const filterBar = document.getElementById('filter-bar');
 const racketContainer = document.getElementById('racket-container');
 
 function init() {
+    initTheme();
     renderFilters();
     filterRackets('all');
     renderRanking();
+}
+
+// --- THEME TOGGLE ---
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    const iconLight = document.getElementById('theme-icon-light');
+    const iconDark = document.getElementById('theme-icon-dark');
+    if (iconLight && iconDark) {
+        if (theme === 'dark') {
+            iconLight.style.display = 'block';
+            iconDark.style.display = 'none';
+        } else {
+            iconLight.style.display = 'none';
+            iconDark.style.display = 'block';
+        }
+    }
 }
 
 // --- NAVIGATION ---
@@ -181,6 +211,8 @@ function openModalData(data) {
     const tag = document.getElementById('m-tag');
     tag.style.background = data.ownerColor;
     tag.style.boxShadow = `0 0 20px ${data.ownerColor}`;
+
+    document.querySelector('.modal-content').style.setProperty('--glow-color', data.ownerColor);
 
     document.getElementById('m-price').innerText = data.price;
     document.getElementById('m-desc').innerText = data.description;
