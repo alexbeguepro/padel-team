@@ -1,8 +1,21 @@
 // ===============================================
-// MOTEUR D'AFFICHAGE
+// MOTEUR D'AFFICHAGE (RICHARD MILLE STYLE)
 // ===============================================
 const filterBar = document.getElementById('filter-bar');
 const racketContainer = document.getElementById('racket-container');
+
+// Observer pour l'apparition au Scroll
+const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            scrollObserver.unobserve(entry.target); // Ne jouer qu'une fois
+        }
+    });
+}, {
+    threshold: 0.1, // Déclenche quand 10% de la carte est visible
+    rootMargin: "0px 0px -50px 0px" // Décale légèrement vers le haut
+});
 
 function init() {
     initTheme();
@@ -49,17 +62,25 @@ function switchView(viewName) {
     // Show target
     const target = document.getElementById(viewName + '-view');
     target.style.display = 'block';
-    // Trigger reflow to restart animation if needed
+    // Trigger reflow to restart CSS animation
     target.classList.remove('active');
     void target.offsetWidth;
     target.classList.add('active');
 
     document.getElementById('nav-' + viewName).classList.add('active');
 
-    // Toggle filters
+    // Toggle filters visibility
     const filterWrapper = document.getElementById('garage-filters');
     if (filterWrapper) {
         filterWrapper.style.display = (viewName === 'garage') ? 'block' : 'none';
+    }
+
+    // Ré-observer les cartes si on revient sur le garage
+    if (viewName === 'garage') {
+        document.querySelectorAll('.card').forEach(card => {
+            card.classList.remove('visible');
+            scrollObserver.observe(card);
+        });
     }
 }
 
@@ -70,7 +91,6 @@ function renderRanking() {
 
     list.innerHTML = '';
 
-    // Tri : Les classés d'abord (petit rank = meilleur), puis les non-classés à la fin
     rankingData.sort((a, b) => {
         if (a.nationalRank === null) return 1;
         if (b.nationalRank === null) return -1;
@@ -79,29 +99,17 @@ function renderRanking() {
 
     rankingData.forEach((player, index) => {
         const item = document.createElement('div');
-        // On garde une classe pour le style, basée sur l'index (1er, 2e, 3e...)
-        item.className = `ranking-item rank-${index + 1}`;
+        item.className = 'ranking-item';
 
-        // Affichage du Rank National ou "NC"
         const rankDisplay = player.nationalRank ? `#${player.nationalRank}` : 'NC';
 
-        // Récupération de la couleur du joueur
+        // Récupération de la couleur du joueur pour l'accent visuel (ligne verticale)
         const profile = profilesData.find(p => p.name === player.name);
-        const colorHex = profile ? profile.color : '#ffffff';
-
-        let r = 255, g = 255, b = 255;
-        if (colorHex.startsWith('#') && colorHex.length === 7) {
-            r = parseInt(colorHex.substring(1, 3), 16);
-            g = parseInt(colorHex.substring(3, 5), 16);
-            b = parseInt(colorHex.substring(5, 7), 16);
-        }
-
+        const colorHex = profile ? profile.color : 'var(--text-muted)';
         item.style.setProperty('--rank-color', colorHex);
-        item.style.setProperty('--rank-bg', `rgba(${r}, ${g}, ${b}, 0.15)`);
-        item.style.setProperty('--rank-border', `rgba(${r}, ${g}, ${b}, 0.5)`);
 
         item.innerHTML = `
-            <div class="rank-num" style="font-size: 0.9em; width: 80px;">${rankDisplay}</div>
+            <div class="rank-num">${rankDisplay.replace('#', '')}</div>
             <div class="rank-name">${player.name}</div>
             <div class="rank-points">${player.points} pts</div>
         `;
@@ -115,7 +123,7 @@ function renderFilters() {
         btn.className = 'filter-btn';
         btn.onclick = () => filterRackets(index);
         btn.innerHTML = `
-            <span class="filter-dot" style="background: ${profile.color}; box-shadow: 0 0 8px ${profile.color};"></span>
+            <span class="filter-dot" style="background: ${profile.color};"></span>
             ${profile.name}
         `;
         filterBar.appendChild(btn);
@@ -128,17 +136,14 @@ function filterRackets(targetIndex) {
 
         if (isTarget) {
             btn.classList.add('active');
-            if (targetIndex === 'all') {
-                btn.style.boxShadow = "0 0 20px rgba(255,255,255,0.2)";
-            } else {
+            if (targetIndex !== 'all') {
                 const color = profilesData[targetIndex].color;
-                btn.style.borderColor = color;
-                btn.style.boxShadow = `0 0 20px ${color}`;
+                // Juste une légère indication colorée au lieu de la grosse bordure
+                btn.style.color = 'var(--text-main)';
             }
         } else {
             btn.classList.remove('active');
-            btn.style.boxShadow = "none";
-            btn.style.borderColor = "var(--border-glass)";
+            btn.style.color = '';
         }
     });
 
@@ -159,6 +164,9 @@ function filterRackets(targetIndex) {
             return r;
         });
     }
+
+    // Reset Observer before displaying new items
+    scrollObserver.disconnect();
     displayRackets(racketsToShow);
 }
 
@@ -166,18 +174,18 @@ function displayRackets(list) {
     racketContainer.innerHTML = '';
 
     if (list.length === 0) {
-        racketContainer.innerHTML = `<div class="empty-state">🚧 Pas encore de matos ici...</div>`;
+        racketContainer.innerHTML = `<div class="empty-state">AUCUNE DONNÉE DISPONIBLE</div>`;
         return;
     }
 
     list.forEach((racket, index) => {
         const card = document.createElement('div');
         card.className = 'card';
-        card.style.setProperty('--glow-color', racket.ownerColor);
+        card.style.setProperty('--glow-color', racket.ownerColor); // Sert pour le badge owner
         card.onclick = () => openModalData(racket);
 
         const badge = `<div class="owner-badge">${racket.ownerName}</div>`;
-        let mainImage = racket.images && racket.images.length > 0 ? racket.images[0] : 'https://placehold.co/300x300/1e293b/ffffff?text=NO+IMAGE';
+        let mainImage = racket.images && racket.images.length > 0 ? racket.images[0] : 'https://placehold.co/400x400/0a0a0a/333333?text=NO+IMAGE';
 
         card.innerHTML = `
             ${badge}
@@ -187,34 +195,36 @@ function displayRackets(list) {
             <h2>${racket.name}</h2>
             <div class="card-level">${racket.level}</div>
             <div class="card-footer">
-                <span class="price-tag">${racket.price}</span>
+                <span class="price-tag">${racket.price.replace('€', 'EUR')}</span>
                 <span class="view-arrow">➔</span>
             </div>
         `;
         racketContainer.appendChild(card);
 
-        setTimeout(() => { card.classList.add('visible'); }, index * 100);
+        // On observe l'élément pour déclencher l'animation au scroll
+        scrollObserver.observe(card);
     });
 }
 
 // ===============================================
-// MODALE
+// SIDE PANEL (REMPLACE L'ANCIENNE MODALE)
 // ===============================================
 const modalOverlay = document.getElementById('modal');
 const mainImg = document.getElementById('m-img');
-const thumbsContainer = document.getElementById('m-thumbs');
+const thumbsContainer = document.getElementById('m-thumbs'); // Nouveau conteneur de miniatures
 
 function openModalData(data) {
+    // Remplissage des données textuelles
     document.getElementById('m-title').innerText = data.name;
-    document.getElementById('m-tag').innerText = "Niveau " + data.level;
+    document.getElementById('m-tag').innerText = "CALIBRE // " + data.level; // Ton horlogerie
 
     const tag = document.getElementById('m-tag');
-    tag.style.background = data.ownerColor;
-    tag.style.boxShadow = `0 0 20px ${data.ownerColor}`;
+    tag.style.color = data.ownerColor;
 
-    document.querySelector('.modal-content').style.setProperty('--glow-color', data.ownerColor);
+    // Injecter la couleur sur la modale pour les jauges
+    modalOverlay.style.setProperty('--glow-color', data.ownerColor);
 
-    document.getElementById('m-price').innerText = data.price;
+    document.getElementById('m-price').innerText = data.price.replace('€', ' EUR');
     document.getElementById('m-desc').innerText = data.description;
     document.getElementById('m-link').href = data.url;
 
@@ -223,47 +233,91 @@ function openModalData(data) {
     document.getElementById('m-foam').innerText = data.specs.foam || '-';
     document.getElementById('m-surface').innerText = data.specs.surface || '-';
 
+    // Gestion de la galerie d'images
     if (data.images && data.images.length > 0) {
         mainImg.src = data.images[0];
+
+        // Vider l'ancien conteneur
         thumbsContainer.innerHTML = '';
-        data.images.forEach(imgSrc => {
-            const thumb = document.createElement('img');
-            thumb.src = imgSrc;
-            thumb.className = 'thumb-img';
-            thumb.onclick = (e) => {
-                mainImg.src = imgSrc;
-                document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
-                e.target.classList.add('active');
-                e.stopPropagation();
-            };
-            thumbsContainer.appendChild(thumb);
-        });
+
+        // S'il y a plus d'une image, on crée les vignettes
+        if (data.images.length > 1) {
+            data.images.forEach((imgSrc, index) => {
+                const thumb = document.createElement('img');
+                thumb.src = imgSrc;
+                thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
+
+                thumb.onclick = (e) => {
+                    // Update main image
+                    mainImg.src = imgSrc;
+
+                    // Update active state on vignettes
+                    document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    e.stopPropagation();
+                };
+
+                thumbsContainer.appendChild(thumb);
+            });
+        }
     } else {
-        mainImg.src = 'https://placehold.co/300x300/1e293b/ffffff?text=NO+IMAGE';
-        thumbsContainer.innerHTML = '';
+        mainImg.src = 'https://placehold.co/600x600/0a0a0a/333333?text=NO+IMAGE';
+        if (thumbsContainer) thumbsContainer.innerHTML = '';
     }
 
+    // Gestion des jauges dynamiques (Télémétrie)
     const statsContainer = document.getElementById('m-stats');
     statsContainer.innerHTML = '';
     for (const [key, val] of Object.entries(data.stats)) {
+        // Formattage 00/10 ou 08/10
+        const formattedVal = val < 10 ? '0' + val : val;
+
         statsContainer.innerHTML += `
-            <div class="stat-item">
-                <div class="stat-label"><span>${key}</span><span>${val}/10</span></div>
-                <div class="progress-bg">
-                    <div class="progress-fill" style="width: ${val * 10}%; background: ${data.ownerColor}; color: ${data.ownerColor}"></div>
+            <div class="stat-row">
+                <span class="stat-name">${key}</span>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-fill stat-animated" data-width="${val * 10}%"></div>
                 </div>
-            </div>`;
+                <span class="stat-val">${formattedVal}</span>
+            </div>
+        `;
     }
 
-    modalOverlay.style.display = 'flex';
-    setTimeout(() => { modalOverlay.classList.add('show'); }, 10);
+    // Ouverture visuelle de l'overlay (Slide in activé via CSS)
+    modalOverlay.style.visibility = 'visible'; // Pré-requis CSS
+
+    // On force un reflow puis on ajoute la classe .show
+    requestAnimationFrame(() => {
+        modalOverlay.classList.add('show');
+
+        // Déclenchement de l'animation des jauges après ouverture
+        setTimeout(() => {
+            document.querySelectorAll('.stat-animated').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width');
+            });
+        }, 300); // Laisse le temps au panneau de slider
+    });
 }
 
 function closeModal() {
     modalOverlay.classList.remove('show');
-    setTimeout(() => { modalOverlay.style.display = 'none'; }, 300);
+
+    // Remise à zéro des jauges de statistiques (pour la prochaine ouverture)
+    document.querySelectorAll('.stat-animated').forEach(bar => {
+        bar.style.width = '0%';
+    });
+
+    // On attend la fin de l'animation CSS avant de cacher complètement
+    setTimeout(() => {
+        modalOverlay.style.visibility = 'hidden';
+    }, 600); // 600ms = transition duration dans styles.css
 }
 
-window.onclick = function (event) { if (event.target == modalOverlay) closeModal(); }
+window.onclick = function (event) {
+    if (event.target == modalOverlay) {
+        closeModal();
+    }
+}
 
+// Initialisation
 init();

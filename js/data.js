@@ -16,7 +16,7 @@ const profilesData = [
             },
             {
                 name: "Head Concord", level: "Intermédiaire",
-                images: ["img/alex/head-concord_face.webp", "img/alex/head-concord_cote.webp", "img/alex/head-concord_poser.webp"],
+                images: ["img/alex/head-concord_face.png", "img/alex/head-concord_cote.png", "img/alex/head-concord_poser.png"],
                 url: "https://www.intersport.fr", price: "68,90 €",
                 specs: { weight: "365g", shape: "Goutte d'eau", foam: "Power Foam", surface: "Innegra" },
                 description: "Raquette polyvalente pour progresser.",
@@ -24,7 +24,7 @@ const profilesData = [
             },
             {
                 name: "Babolat Counter Viper 2025", level: "Expert",
-                images: ["img/alex/babolat-counter-viper_face.webp", "img/alex/babolat-counter-viper_cote.webp"],
+                images: ["img/alex/babolat-counter-viper_face.png", "img/alex/babolat-counter-viper_cote.png"],
                 url: "https://www.padelreference.com", price: "249,90 €",
                 specs: { weight: "365g", shape: "Hybride", foam: "X-EVA", surface: "Carbone 3K" },
                 description: "Ma raquette actuelle, une arme de précision.",
@@ -38,7 +38,7 @@ const profilesData = [
         rackets: [
             {
                 name: "Babolat Storm", level: "Débutant",
-                images: ["img/mateo/babolat-storm_face.webp", "img/mateo/babolat-storm_cote.webp"],
+                images: ["img/mateo/babolat-storm_face.png", "img/mateo/babolat-storm_cote.png"],
                 url: "https://esprit-padel-shop.com/products/raquette-de-padel-babolat-storm", price: "64,90 €",
                 specs: { weight: "345g", shape: "Goutte d'eau", foam: "Soft EVA", surface: "Fibre de verre" },
                 description: "La raquette de Mateo. Ultra légère et tolérante.",
@@ -46,7 +46,7 @@ const profilesData = [
             },
             {
                 name: "Nox NextGen Pro Attack 3K", level: "Avancé",
-                images: ["img/mateo/nox-nextgen_face.webp", "img/mateo/nox-nextgen_cote.webp"],
+                images: ["img/mateo/nox-nextgen_face.png", "img/mateo/nox-nextgen_cote.png"],
                 url: "https://www.padelreference.com/fr/raquettes-de-padel/p/nox-nextgen-pro-attack-3k-nfa-series-2025", price: "129,90 €",
                 specs: { weight: "360-375g", shape: "Diamant", foam: "Dure", surface: "Sablée" },
                 description: "La nouvelle arme de Mateo. Puissance et spin.",
@@ -69,7 +69,7 @@ const profilesData = [
             {
                 name: "Joma Master Black/Green",
                 level: "Débutant",
-                images: ["img/elouan/joma_face.jpg", "img/elouan/joma_cote.jpg"],
+                images: ["img/elouan/joma_face.png", "img/elouan/joma_cote.png"],
                 url: "https://www.padeliberico.es/fr/joma-master-negro-verde.html",
                 price: "40,00 €",
                 specs: { weight: "360-375g", shape: "Ronde", foam: "EVA Soft", surface: "Carbone 1K" },
@@ -79,7 +79,7 @@ const profilesData = [
             {
                 name: "Babolat Technical Viper 2025",
                 level: "Expert",
-                images: ["img/elouan/babolat-technical-viper_face.webp", "img/elouan/babolat-technical-viper_cote.webp"],
+                images: ["img/elouan/babolat-technical-viper_face.png", "img/elouan/babolat-technical-viper_cote.png"],
                 url: "https://www.padelreference.com/fr/raquettes-de-padel-babolat/p/raquette-de-padel-babolat-technical-viper-2025",
                 price: "259,90 €",
                 specs: { weight: "365g", shape: "Diamant", foam: "X-EVA", surface: "Carbone 12K" },
@@ -95,7 +95,7 @@ const profilesData = [
             {
                 name: "Head Flash Pro 2023",
                 level: "Débutant / Inter.",
-                images: ["img/tapin/head-flash-pro_face.webp", "img/tapin/head-flash-pro_cote.webp"],
+                images: ["img/tapin/head-flash-pro_face.png", "img/tapin/head-flash-pro_cote.png"],
                 url: "https://www.intersport.fr/raquette_de_padel_adulte_flash_pro_2023-head-p-226113~NA7/",
                 price: "79,99 €",
                 specs: { weight: "365g", shape: "Goutte d'eau", foam: "Power Foam", surface: "Fibre de verre" },
@@ -105,7 +105,7 @@ const profilesData = [
             {
                 name: "Adidas Metalbone Carbon CTRL 3.4",
                 level: "Avancé à expert",
-                images: ["img/tapin/adidas-metalbone-ctrl_face.webp", "img/tapin/adidas-metalbone-ctrl_cote.webp"],
+                images: ["img/tapin/adidas-metalbone-ctrl_face.png", "img/tapin/adidas-metalbone-ctrl_cote.png"],
                 url: "https://www.padelreference.com/fr/raquettes-de-padel/p/adidas-metalbone-carbon-ctrl-34-2025",
                 price: "159,90 €",
                 specs: { weight: "360-375g", shape: "Ronde", foam: "Soft Performance", surface: "Carbone 6K" },
@@ -115,7 +115,7 @@ const profilesData = [
             {
                 name: "Nox AT10 Pro Cup Soft 2026",
                 level: "Avancé à expert",
-                images: ["img/tapin/nox-at10-soft_face.webp", "img/tapin/nox-at10-soft_cote.webp"],
+                images: ["img/tapin/nox-at10-soft_face.png", "img/tapin/nox-at10-soft_cote.png"],
                 url: "https://www.padelreference.com/fr/raquettes-de-padel/p/nox-at10-pro-cup-soft-2026",
                 price: "199,90 €",
                 specs: { weight: "360-375g", shape: "Goutte d'eau", foam: "HR3 Soft", surface: "Fibre de verre Alum" },
@@ -131,7 +131,7 @@ const profilesData = [
             {
                 name: "Head Extreme Elite 2024",
                 level: "Intermédiaire",
-                images: ["img/matthias/head-extreme-elite_face.webp", "img/matthias/head-extreme-elite_cote.webp"],
+                images: ["img/matthias/head-extreme-elite_face.png", "img/matthias/head-extreme-elite_cote.png"],
                 url: "https://www.padelreference.com/fr/raquettes-de-padel/p/head-extreme-elite-2024",
                 price: "99,90 €",
                 specs: { weight: "365g", shape: "Diamant", foam: "Power Foam", surface: "Fibre de verre" },
@@ -141,7 +141,7 @@ const profilesData = [
             {
                 name: "Nox AT10 Genius 18K Alum 2025",
                 level: "Expert",
-                images: ["img/matthias/nox_at10_genius_18k_face.webp", "img/matthias/nox_at10_genius_18k_cote.webp"],
+                images: ["img/matthias/nox_at10_genius_18k_face.png", "img/matthias/nox_at10_genius_18k_cote.png"],
                 url: "https://www.padelnuestro.com/fr/nox-at10-genius-18k-alum-by-agustin-tapia-2025-113540-p",
                 price: "179,95 €",
                 specs: { weight: "360-375g", shape: "Goutte d'eau", foam: "MLD Black EVA", surface: "Carbon 18K Alum" },
@@ -157,7 +157,7 @@ const profilesData = [
             {
                 name: "Bullpadel Sky Power",
                 level: "Intermédiaire",
-                images: ["img/erwan/bullpadel-sky-power_face.jpg", "img/erwan/bullpadel-sky-power_cote.jpg"],
+                images: ["img/erwan/bullpadel-sky-power_face.png", "img/erwan/bullpadel-sky-power_cote.png"],
                 url: "https://www.padelreference.com",
                 price: "69,90 €",
                 specs: { weight: "360-370g", shape: "Diamant", foam: "Soft EVA", surface: "Polyglass" },
