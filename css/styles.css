@@ -787,9 +787,42 @@ h1 {
         grid-template-columns: 1fr;
     }
 
+    /* --- RESPONSIVE CLASSEMENT --- */
+    .ranking-container {
+        padding: 0 10px;
+    }
+
     .ranking-header,
     .ranking-item {
-        grid-template-columns: 50px 1fr 60px;
+        grid-template-columns: 55px 1fr auto;
+        /* 55px pour garantir que les numéros à 5 chiffres (ex: 76603) passent sans chevaucher */
+        gap: 10px;
+        padding: 15px 0;
+    }
+
+    .rank-num {
+        font-size: 0.95rem;
+        /* Légèrement plus petit pour tout faire rentrer */
+        padding-left: 0;
+        text-align: left;
+    }
+
+    .rank-name {
+        font-size: 0.9rem;
+        gap: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .rank-name::before {
+        height: 12px;
+        width: 2px;
+        flex-shrink: 0;
+    }
+
+    .rank-points {
+        font-size: 0.95rem;
     }
 }
 
