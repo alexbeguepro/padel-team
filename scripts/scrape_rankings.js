@@ -4,20 +4,20 @@ const path = require('path');
 
 // Configuration
 const TARGET_URL = 'https://tenup.fft.fr/classement-padel?categorie=H';
-const DATA_FILE_PATH = path.join(__dirname, '../js/data.js');
+const DATA_FILE_PATH = path.join(__dirname, '../data/ranking.json');
 
 async function scrapeRankings() {
     console.log('🎾 Starting Padel Ranking Scraper...');
 
     let dataContent = fs.readFileSync(DATA_FILE_PATH, 'utf8');
-
-    const rankingDataMatch = dataContent.match(/const rankingData = (\[[\s\S]*?\]);/);
-    if (!rankingDataMatch) {
-        console.error('❌ Could not find rankingData in js/data.js');
+    let rankingData = [];
+    try {
+        rankingData = JSON.parse(dataContent);
+    } catch (e) {
+        console.error('❌ Could not parse ranking.json');
         return;
     }
 
-    let rankingData = eval(rankingDataMatch[1]);
     const playersToScrape = rankingData.filter(p => p.firstName && p.lastName);
 
     if (playersToScrape.length === 0) {
@@ -162,8 +162,30 @@ async function scrapeRankings() {
 
                 if (result) {
                     console.log(`✅ Found: Rank ${result.rank}, Points ${result.points}`);
+                    
+                    // Update current rank
                     player.nationalRank = result.rank;
                     player.points = result.points;
+
+                    // History management
+                    if (!player.history) player.history = [];
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    const lastEntry = player.history.length > 0 ? player.history[player.history.length - 1] : null;
+
+                    // Only add to history if it's a new day or stats changed
+                    if (!lastEntry || lastEntry.date !== today || lastEntry.rank !== result.rank || lastEntry.points !== result.points) {
+                        // Remove existing entry for today to overwrite with fresh scrape if needed
+                        if (lastEntry && lastEntry.date === today) {
+                            player.history.pop();
+                        }
+                        player.history.push({
+                            date: today,
+                            rank: result.rank,
+                            points: result.points
+                        });
+                    }
+
                 } else {
                     console.log(`❌ Player ${player.firstName} ${player.lastName} not found (Name mismatch).`);
                 }
@@ -177,26 +199,11 @@ async function scrapeRankings() {
         await browser.close();
     }
 
-    console.log('\n💾 Saving updated data...');
-
-    let formattedData = "const rankingData = [\n";
-    rankingData.forEach((p, idx) => {
-        formattedData += "    { ";
-        formattedData += `name: "${p.name}", `;
-        formattedData += `firstName: "${p.firstName}", `;
-        formattedData += `lastName: "${p.lastName}", `;
-        formattedData += `nationalRank: ${p.nationalRank}, `;
-        formattedData += `points: ${p.points}`;
-        formattedData += " }";
-        if (idx < rankingData.length - 1) formattedData += ",";
-        formattedData += "\n";
-    });
-    formattedData += "];";
-
-    const newDataContent = dataContent.replace(/const rankingData = \[[\s\S]*?\];/, formattedData);
-
-    fs.writeFileSync(DATA_FILE_PATH, newDataContent, 'utf8');
-    console.log('✅ js/data.js updated successfully!');
+    console.log('\n💾 Saving updated ranking data...');
+    
+    // Format JSON carefully to maintain readability
+    fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(rankingData, null, 4), 'utf8');
+    console.log('✅ data/ranking.json updated successfully!');
 }
 
 scrapeRankings();

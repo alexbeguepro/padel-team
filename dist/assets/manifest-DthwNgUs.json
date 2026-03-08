@@ -1,0 +1,21 @@
+{
+  "name": "Padel Team Garage",
+  "short_name": "PadelGarage",
+  "description": "L'arsenal ultime et le classement officiel de l'équipe",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/0a0a0a/ffffff?text=PTG",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://placehold.co/512x512/0a0a0a/ffffff?text=PTG",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

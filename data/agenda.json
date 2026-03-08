@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Alex",
+        "availability": {
+            "lundi": true,
+            "mardi": false,
+            "mercredi": true,
+            "jeudi": true,
+            "vendredi": false,
+            "samedi": true,
+            "dimanche": false
+        }
+    },
+    {
+        "name": "Matthias",
+        "availability": {
+            "lundi": false,
+            "mardi": true,
+            "mercredi": true,
+            "jeudi": false,
+            "vendredi": true,
+            "samedi": true,
+            "dimanche": true
+        }
+    },
+    {
+        "name": "Mathys",
+        "availability": {
+            "lundi": true,
+            "mardi": false,
+            "mercredi": false,
+            "jeudi": true,
+            "vendredi": true,
+            "samedi": true,
+            "dimanche": false
+        }
+    },
+    {
+        "name": "Erwan",
+        "availability": {
+            "lundi": false,
+            "mardi": true,
+            "mercredi": true,
+            "jeudi": true,
+            "vendredi": false,
+            "samedi": true,
+            "dimanche": true
+        }
+    },
+    {
+        "name": "Elouan",
+        "availability": {
+            "lundi": true,
+            "mardi": true,
+            "mercredi": false,
+            "jeudi": false,
+            "vendredi": true,
+            "samedi": false,
+            "dimanche": true
+        }
+    },
+    {
+        "name": "Mateo",
+        "availability": {
+            "lundi": false,
+            "mardi": false,
+            "mercredi": true,
+            "jeudi": true,
+            "vendredi": true,
+            "samedi": false,
+            "dimanche": false
+        }
+    }
+]

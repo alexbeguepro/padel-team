@@ -5,12 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Padel Team Garage ⚡</title>
+
+    <!-- Open Graph Meta Tags (Social Media Sharing) -->
+    <meta property="og:title" content="Padel Team Garage ⚡">
+    <meta property="og:description"
+        content="L'arsenal ultime et le classement officiel de la Jules Marie League. Comparez les équipements de l'équipe.">
+    <!-- Remplace l'URL de l'image par une vraie URL quand le site sera en ligne -->
+    <meta property="og:image" content="https://placehold.co/1200x630/050505/ffffff?text=PADEL+TEAM+GARAGE+|+ARSENAL+OFFICIEL">
+    <meta property="og:url" content="https://alexbeguepro.github.io/padel-team/">
+    <meta property="og:type" content="website">
+
+    <!-- PWA / Mobile Web App -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#050505">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/0a0a0a/ffffff?text=PTG">
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=3">
 </head>
 
 <body>
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <h1 class="splash-title">PADEL</h1>
+            <div class="splash-subtitle">TEAM GARAGE</div>
+            <div class="loader-line"></div>
+        </div>
+    </div>
 
     <header>
         <div class="header-content">
@@ -48,17 +71,48 @@
                     <span class="nav-text">Classement</span>
                     <span class="nav-line"></span>
                 </button>
+                <button class="nav-btn" id="btn-agenda" style="color: var(--accent-red); font-weight: 800;">
+                    <span class="nav-text">📅 AGENDA</span>
+                    <span class="nav-line"></span>
+                </button>
             </nav>
 
             <div class="filter-wrapper" id="garage-filters">
+                <div class="search-sort-bar">
+                    <input type="text" id="search-input" class="search-input"
+                        placeholder="Rechercher une raquette (ex: Viper)...">
+                    <select id="brand-filter" class="select-filter">
+                        <option value="all">Toutes les marques</option>
+                        <option value="Babolat">Babolat</option>
+                        <option value="Head">Head</option>
+                        <option value="Nox">Nox</option>
+                        <option value="Bullpadel">Bullpadel</option>
+                        <option value="Adidas">Adidas</option>
+                        <option value="Kuikma">Kuikma</option>
+                        <option value="Joma">Joma</option>
+                    </select>
+                    <select id="level-filter" class="select-filter">
+                        <option value="all">Tous niveaux</option>
+                        <option value="Débutant">Débutant</option>
+                        <option value="Intermédiaire">Intermédiaire</option>
+                        <option value="Avancé">Avancé</option>
+                        <option value="Expert">Expert</option>
+                    </select>
+                </div>
                 <div class="filter-bar" id="filter-bar">
-                    <button class="filter-btn active" onclick="filterRackets('all')" id="btn-all">
-                        Tout
+                    <button class="filter-btn active" onclick="filterByOwner('all')" id="btn-all">
+                        Tout l'Arsenal
                     </button>
+                    <!-- Player buttons injected here by JS -->
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- FLOATING COMPARE BUTTON -->
+    <button id="floating-compare-btn" class="floating-compare-btn" onclick="openCompareModal()" style="display: none;">
+        COMPARER (<span id="compare-count">0</span>/2)
+    </button>
 
     <main class="container">
         <!-- VUE GARAGE -->
@@ -70,6 +124,11 @@
         <!-- VUE CLASSEMENT -->
         <section id="ranking-view" class="view-section" style="display:none;">
             <div class="ranking-container">
+                <!-- Fun Facts Dashboard -->
+                <div class="dashboard-stats" id="fun-facts-dash">
+                    <!-- Stats injected here via JS -->
+                </div>
+
                 <div class="ranking-header">
                     <div class="rank-col">Pos</div>
                     <div class="player-col">Pilote</div>
@@ -118,19 +177,23 @@
 
                         <div class="specs-grid">
                             <div class="spec-item">
-                                <span class="spec-label">Poids</span>
+                                <span class="spec-label"
+                                    data-tooltip="Influence la force de frappe et la maniabilité.">Poids</span>
                                 <span class="spec-value" id="m-weight">-</span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-label">Forme</span>
+                                <span class="spec-label"
+                                    data-tooltip="Ronde (Contrôle), Diamant (Puissance), Goutte (Polyvalente)">Forme</span>
                                 <span class="spec-value" id="m-shape">-</span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-label">Mousse</span>
+                                <span class="spec-label"
+                                    data-tooltip="Soft (Confort & Tolérance), Hard (Puissance & Précision)">Mousse</span>
                                 <span class="spec-value" id="m-foam">-</span>
                             </div>
                             <div class="spec-item">
-                                <span class="spec-label">Surface</span>
+                                <span class="spec-label"
+                                    data-tooltip="Fibre de verre (Souple), Carbone (Rigide & Sec)">Surface</span>
                                 <span class="spec-value" id="m-surface">-</span>
                             </div>
                         </div>
@@ -159,8 +222,42 @@
         </div>
     </div>
 
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
+    <!-- MODALE COMPARATEUR -->
+    <div class="compare-overlay" id="compare-modal">
+        <div class="compare-panel">
+            <button class="close-btn" onclick="closeCompareModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h2 class="compare-title">ANALYSE BALISTIQUE</h2>
+            <div class="compare-layout" id="compare-layout">
+                <!-- Les colonnes de raquettes seront injectées ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- AGENDA SIDEBAR -->
+    <div id="agenda-sidebar">
+        <div class="agenda-header">
+            <h2>📅 Dispos de la Semaine</h2>
+            <button id="close-agenda" class="close-btn" style="position: relative; top: 0; right: 0;">✖</button>
+        </div>
+        <div class="agenda-controls">
+            <select id="agenda-player-select" class="select-filter">
+                <option value="">👤 Qui êtes-vous ?</option>
+                <!-- Options injected by JS -->
+            </select>
+            <div id="agenda-save-status" class="save-status"></div>
+        </div>
+        <div id="agenda-content">
+            <!-- Agenda days injected here -->
+        </div>
+    </div>
+
+    <script src="js/app.js?v=3" type="module"></script>
 </body>
 
 </html>
