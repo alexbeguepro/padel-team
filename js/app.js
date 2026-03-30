@@ -7,19 +7,17 @@ import { loadData } from './api.js';
 import { initUI } from './ui.js';
 import { initGarage } from './garage.js';
 import { renderRanking } from './ranking.js';
-import { initAgenda } from './agenda.js';
 
 async function bootstrap() {
     // 1. Init UI transversale (Thème, Splash Screen...)
     initUI();
 
     // 2. Load Data
-    const { profilesData, rankingData, agendaData } = await loadData();
+    const { profilesData, rankingData } = await loadData();
 
     // 3. Init Vues
     initGarage(profilesData);
     renderRanking(rankingData, profilesData);
-    initAgenda(agendaData, profilesData);
 
     // 4. Setup Global Navigation
     setupNavigation();

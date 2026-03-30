@@ -5,39 +5,21 @@
 
 export async function loadData() {
     try {
-        const [racketsRes, rankingRes, agendaRes] = await Promise.all([
+        const [racketsRes, rankingRes] = await Promise.all([
             fetch('./data/rackets.json'),
-            fetch('./data/ranking.json'),
-            fetch('./data/agenda.json')
+            fetch('./data/ranking.json')
         ]);
 
-        if (!racketsRes.ok || !rankingRes.ok || !agendaRes.ok) {
-            throw new Error(`Erreur réseau: Rackets(${racketsRes.status}) Ranking(${rankingRes.status}) Agenda(${agendaRes.status})`);
+        if (!racketsRes.ok || !rankingRes.ok) {
+            throw new Error(`Erreur réseau: Rackets(${racketsRes.status}) Ranking(${rankingRes.status})`);
         }
 
         const profilesData = await racketsRes.json();
         const rankingData = await rankingRes.json();
-        const initialAgendaData = await agendaRes.json();
 
-        // Fusionner avec les données locales (localStorage) si elles existent
-        const storedAgenda = getStoredAgendaData();
-        const agendaData = initialAgendaData.map(player => {
-            const storedPlayer = storedAgenda.find(p => p.name === player.name);
-            return storedPlayer ? { ...player, availability: { ...player.availability, ...storedPlayer.availability } } : player;
-        });
-
-        return { profilesData, rankingData, agendaData };
+        return { profilesData, rankingData };
     } catch (error) {
         console.error("Impossible de charger les données :", error);
-        return { profilesData: [], rankingData: [], agendaData: [] };
+        return { profilesData: [], rankingData: [] };
     }
-}
-
-export function saveAgendaData(agendaData) {
-    localStorage.setItem('padel_agenda_v1', JSON.stringify(agendaData));
-}
-
-function getStoredAgendaData() {
-    const data = localStorage.getItem('padel_agenda_v1');
-    return data ? JSON.parse(data) : [];
 }

@@ -8,10 +8,8 @@ const ASSETS = [
   '/js/garage.js',
   '/js/ranking.js',
   '/js/ui.js',
-  '/js/agenda.js',
   '/data/rackets.json',
-  '/data/ranking.json',
-  '/data/agenda.json'
+  '/data/ranking.json'
 ];
 
 self.addEventListener('install', (event) => {
