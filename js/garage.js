@@ -469,7 +469,7 @@ function setupModalEvents() {
     });
 }
 
-function closeModal() {
+window.closeModal = function () {
     modalOverlay.classList.remove('show');
     document.querySelectorAll('.stat-animated').forEach(bar => {
         bar.style.width = '0%';

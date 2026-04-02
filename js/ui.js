@@ -38,6 +38,7 @@ function toggleTheme() {
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
 }
+window.toggleTheme = toggleTheme;
 
 function updateThemeIcon(theme) {
     const iconLight = document.getElementById('theme-icon-light');
