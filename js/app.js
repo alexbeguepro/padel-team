@@ -38,28 +38,44 @@ async function bootstrap() {
 }
 
 function setupPWAInstall() {
+    const installBtn = document.getElementById('install-btn');
+    if (!installBtn) return;
+
+    // Check if already in standalone mode (already installed)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    
+    // Always display the button on mobile browsers to handle iOS gracefully
+    // (except if it's already installed)
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isStandalone && isMobile) {
+        installBtn.style.display = 'block';
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        const installBtn = document.getElementById('install-btn');
-        if (installBtn) {
-            installBtn.style.display = 'block';
-            installBtn.addEventListener('click', async () => {
-                installBtn.style.display = 'none';
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the PWA prompt');
-                }
-                deferredPrompt = null;
-            });
+        installBtn.style.display = 'block'; // S'assure que c'est affiché même sur Desktop
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            // Installation native Android/Chrome
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('User accepted the PWA prompt');
+            }
+            deferredPrompt = null;
+        } else {
+            // Fallback pour iOS (Safari) et Android (via HTTP local en test)
+            alert("🍏 Sur iPhone/iPad : Appuyez sur l'icône 'Partager' au centre en bas, puis choisissez 'Sur l'écran d'accueil'.\n\n🤖 Sur Android (si ça ne marche pas) : Appuyez sur les 3 points du navigateur en haut à droite, puis sur 'Ajouter à l'écran d'accueil'.");
         }
     });
 
     window.addEventListener('appinstalled', () => {
         console.log('PWA was installed');
-        const installBtn = document.getElementById('install-btn');
-        if(installBtn) installBtn.style.display = 'none';
+        installBtn.style.display = 'none';
     });
 }
 
