@@ -85,33 +85,39 @@
                 </button>
             </nav>
 
-            <div class="filter-wrapper" id="garage-filters">
+            <div id="garage-filters">
                 <div class="search-sort-bar">
                     <input type="text" id="search-input" class="search-input"
                         placeholder="Rechercher une raquette (ex: Viper)...">
-                    <select id="brand-filter" class="select-filter">
-                        <option value="all">Toutes les marques</option>
-                        <option value="Babolat">Babolat</option>
-                        <option value="Head">Head</option>
-                        <option value="Nox">Nox</option>
-                        <option value="Bullpadel">Bullpadel</option>
-                        <option value="Adidas">Adidas</option>
-                        <option value="Kuikma">Kuikma</option>
-                        <option value="Joma">Joma</option>
-                    </select>
-                    <select id="level-filter" class="select-filter">
-                        <option value="all">Tous niveaux</option>
-                        <option value="Débutant">Débutant</option>
-                        <option value="Intermédiaire">Intermédiaire</option>
-                        <option value="Avancé">Avancé</option>
-                        <option value="Expert">Expert</option>
-                    </select>
+                    
+                    <div class="select-group">
+                        <select id="brand-filter" class="select-filter">
+                            <option value="all">Toutes les marques</option>
+                            <option value="Babolat">Babolat</option>
+                            <option value="Head">Head</option>
+                            <option value="Nox">Nox</option>
+                            <option value="Bullpadel">Bullpadel</option>
+                            <option value="Adidas">Adidas</option>
+                            <option value="Kuikma">Kuikma</option>
+                            <option value="Joma">Joma</option>
+                        </select>
+                        <select id="level-filter" class="select-filter">
+                            <option value="all">Tous niveaux</option>
+                            <option value="Débutant">Débutant</option>
+                            <option value="Intermédiaire">Intermédiaire</option>
+                            <option value="Avancé">Avancé</option>
+                            <option value="Expert">Expert</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="filter-bar" id="filter-bar">
+                
+                <div class="filter-wrapper">
+                    <div class="filter-bar" id="filter-bar">
                     <button class="filter-btn active" onclick="filterByOwner('all')" id="btn-all">
                         Tout l'Arsenal
                     </button>
                     <!-- Player buttons injected here by JS -->
+                </div>
                 </div>
             </div>
         </div>
