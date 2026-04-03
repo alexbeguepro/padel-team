@@ -197,7 +197,10 @@ function displayRackets(list) {
         card.style.animationDelay = `${index * 0.05}s`;
         
         card.style.setProperty('--glow-color', racket.ownerColor);
-        card.onclick = () => openModalData(racket);
+        card.onclick = () => {
+            if (navigator.vibrate) navigator.vibrate(15);
+            openModalData(racket);
+        };
         
         // eSport 3D Tilt Effect
         card.addEventListener('mousemove', handleCardTilt);
@@ -319,6 +322,7 @@ window.openCompareModal = function () {
         return;
     }
 
+    if (navigator.vibrate) navigator.vibrate([10, 30, 10]);
     renderCompareModal();
     compareModal.style.visibility = 'visible';
     requestAnimationFrame(() => {

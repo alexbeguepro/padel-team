@@ -22,6 +22,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="css/styles.css?v=3">
 </head>
 
@@ -42,7 +43,18 @@
                 <div class="subtitle">TEAM GARAGE</div>
             </div>
 
-            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Changer le thème" onclick="toggleTheme()">
+            <!-- Install PWA Button (Hidden by default) -->
+            <button id="install-btn" class="theme-toggle-btn" style="display: none; right: 80px;" aria-label="Installer l'appli">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
+
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Changer le thème">
                 <svg id="theme-icon-light" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18"
                     height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
