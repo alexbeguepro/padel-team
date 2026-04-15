@@ -66,7 +66,7 @@
                 <span class="nav-text">Classement <span class="nav-active-text">[Active]</span></span>
                 <span class="nav-line"></span>
             </button>
-            <button class="nav-btn" onclick="alert('Profile : Bientôt disponible !')">
+            <button class="nav-btn" onclick="switchView('profile')" id="nav-profile">
                 <span class="nav-text">Profile <span class="nav-active-text">[Active]</span></span>
                 <span class="nav-line"></span>
             </button>
@@ -158,6 +158,13 @@
                 <div id="ranking-list" class="ranking-list">
                     <!-- Ranking items will be injected here -->
                 </div>
+            </div>
+        </section>
+
+        <!-- VUE PROFILE / JOUEURS -->
+        <section id="profile-view" class="view-section" style="display:none;">
+            <div class="racket-grid" id="profile-container">
+                <!-- Player cards rendered here -->
             </div>
         </section>
     </main>

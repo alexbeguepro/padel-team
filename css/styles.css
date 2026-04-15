@@ -448,6 +448,61 @@ body {
     line-height: 1;
 }
 
+/* --- PLAYER PROFILE CARDS --- */
+.player-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid var(--glow-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    margin-top: 20px;
+    box-shadow: 0 0 30px var(--glow-color);
+    transition: transform 0.3s ease;
+}
+
+.player-card:hover .player-avatar-large {
+    transform: scale(1.1);
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.p-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.p-stat span {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 5px;
+}
+
+.p-stat strong {
+    font-size: 1.1rem;
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
 /* --- ACTION OVERLAY HOT BUTTONS --- */
 .card-action-overlay {
     position: absolute;
@@ -472,59 +527,22 @@ body {
     pointer-events: auto;
 }
 
-.btn-detail {
+.btn-stats {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: var(--text-main);
-    padding: 12px;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: all 0.2s;
-    font-family: inherit;
-    text-transform: uppercase;
-}
-.btn-detail:hover { border-color: var(--text-main); background: rgba(255, 255, 255, 0.1); }
-
-.btn-row {
-    display: flex;
-    gap: 10px;
-    height: 40px;
-}
-
-.btn-equip {
-    flex: 1.5;
+    height: 45px;
     background: linear-gradient(90deg, #ff00ff, #00f0ff);
     border: none;
     border-radius: 8px;
     color: #fff;
     font-weight: 600;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
     cursor: pointer;
     transition: filter 0.2s;
     font-family: inherit;
     text-transform: uppercase;
 }
-.btn-equip:hover { filter: brightness(1.2); }
-
-.btn-stats {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: var(--text-main);
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    text-transform: uppercase;
-}
-.btn-stats:hover { border-color: var(--text-main); background: rgba(255, 255, 255, 0.1); }
+.btn-stats:hover { filter: brightness(1.2); }
 
 .price-tag {
     font-size: 1rem;

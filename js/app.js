@@ -7,6 +7,7 @@ import { loadData } from './api.js';
 import { initUI } from './ui.js';
 import { initGarage } from './garage.js';
 import { renderRanking } from './ranking.js';
+import { initProfile } from './profile.js';
 
 let deferredPrompt;
 let currentView = 'garage';
@@ -21,6 +22,7 @@ async function bootstrap() {
     // 3. Init Vues
     initGarage(profilesData);
     renderRanking(rankingData, profilesData);
+    initProfile(rankingData, profilesData);
 
     // 4. Setup Global Navigation
     setupNavigation();
@@ -144,7 +146,7 @@ function switchView(viewName) {
 
     const filterWrapper = document.getElementById('garage-filters');
     if (filterWrapper) {
-        filterWrapper.style.display = (viewName === 'garage') ? 'block' : 'none';
+        filterWrapper.style.display = (viewName === 'garage') ? 'flex' : 'none';
     }
 
     if (viewName === 'ranking' && typeof confetti !== 'undefined') {

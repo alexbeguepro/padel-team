@@ -245,18 +245,12 @@ function displayRackets(list) {
             </div>
 
             <div class="card-action-overlay">
-                <button class="btn-detail card-btn-detail">VIEW DETAILS</button>
-                <div class="btn-row">
-                    <button class="btn-equip card-btn-equip">EQUIP</button>
-                    <button class="btn-stats card-btn-stats">STATS</button>
-                </div>
+                <button class="btn-stats card-btn-stats">STATS</button>
             </div>
         `;
 
         card.querySelector('.card-action-overlay').onclick = (e) => e.stopPropagation();
-        card.querySelector('.card-btn-detail').onclick = (e) => { e.stopPropagation(); openModalData(racket); };
         card.querySelector('.card-btn-stats').onclick = (e) => { e.stopPropagation(); openModalData(racket); };
-        card.querySelector('.card-btn-equip').onclick = (e) => { e.stopPropagation(); alert('Raquette ' + racket.name + ' équipée !'); };
 
         // Checkbox Comparateur
         const checkboxWrap = document.createElement('div');
