@@ -1590,3 +1590,86 @@ body {
         transform: scaleY(1);
     }
 }
+
+/* --- PLAYER MODAL --- */
+.player-modal-content {
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    position: relative;
+    pointer-events: auto;
+}
+
+.player-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.player-modal-chart-wrap {
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.player-modal-arsenal-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.arsenal-scroll {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+}
+
+.arsenal-scroll::-webkit-scrollbar { height: 6px; }
+.arsenal-scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 3px; }
+.arsenal-scroll::-webkit-scrollbar-thumb { background: var(--glow-color, rgba(255, 255, 255, 0.2)); border-radius: 3px; }
+
+.mini-racket-card {
+    min-width: 140px;
+    width: 140px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+
+.mini-racket-card:hover {
+    border-color: var(--glow-color);
+    box-shadow: 0 0 15px var(--glow-color);
+    transform: translateY(-5px);
+}
+
+.mini-racket-img img {
+    width: 100%;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+}
+.mini-racket-title {
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--text-main);
+    font-weight: 500;
+}

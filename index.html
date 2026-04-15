@@ -265,9 +265,31 @@
                 <!-- Les colonnes de raquettes seront injectées ici -->
             </div>
         </div>
-    </div>
-
     <script src="js/app.js" type="module"></script>
+    
+    <!-- MODALE PROFIL JOUEUR -->
+    <div class="side-panel-overlay" id="player-modal" style="display: none;">
+        <div class="player-modal-content" id="player-modal-content">
+            <button class="close-btn" onclick="closePlayerModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="player-modal-header" id="pm-header"></div>
+
+            <div class="player-modal-chart-wrap">
+                <h3 class="chart-title" style="margin-bottom: 20px;">PERFORMANCE HISTORY (POINTS)</h3>
+                <canvas id="pm-chart"></canvas>
+            </div>
+
+            <div class="player-modal-arsenal-wrap">
+                <h3 class="chart-title">PLAYER ARSENAL</h3>
+                <div class="arsenal-scroll" id="pm-arsenal"></div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

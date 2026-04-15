@@ -17,7 +17,8 @@ export function initProfile(rankingData, profilesData) {
         return {
             ...rankData,
             color: prof ? prof.color : '#00f0ff',
-            racketCount: prof && prof.rackets ? prof.rackets.length : 0
+            racketCount: prof && prof.rackets ? prof.rackets.length : 0,
+            racketsList: prof && prof.rackets ? prof.rackets : []
         };
     });
 
@@ -59,9 +60,14 @@ export function initProfile(rankingData, profilesData) {
             </div>
             
             <div class="card-action-overlay">
-                <button class="btn-stats" onclick="alert('Statistiques détaillées de ${player.firstName} disponibles bientôt !')" style="background: linear-gradient(90deg, ${player.color}80, ${player.color}); color: #111;">VIEW PROFILE</button>
+                <button class="btn-stats profile-view-btn" style="background: linear-gradient(90deg, ${player.color}80, ${player.color}); color: #111;">VIEW PROFILE</button>
             </div>
         `;
+
+        card.querySelector('.profile-view-btn').onclick = (e) => {
+            e.stopPropagation();
+            openPlayerModal(player);
+        };
 
         card.onclick = () => {
             // Un clic sur la carte ou sur le bouton
@@ -88,4 +94,97 @@ export function initProfile(rankingData, profilesData) {
         container.appendChild(card);
         setTimeout(() => { card.classList.add('visible'); }, index * 100);
     });
+}
+
+window.openPlayerModal = function(player) {
+    const modal = document.getElementById('player-modal');
+    modal.style.display = 'flex';
+    
+    // Header
+    const header = document.getElementById('pm-header');
+    header.innerHTML = `
+        <div class="player-avatar-large" style="width: 80px; height: 80px; font-size: 2rem; background: ${player.color}20; border-color: ${player.color}; box-shadow: 0 0 15px ${player.color}; margin-top: 0;">
+            <span style="color: ${player.color};">${player.firstName.substring(0, 1)}${player.lastName.substring(0, 1)}</span>
+        </div>
+        <div>
+            <h2 style="font-size: 1.8rem; margin: 0; color: #fff;">${player.firstName} ${player.lastName}</h2>
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">POINTS: <strong style="color: ${player.color};">${player.points}</strong> &nbsp;|&nbsp; RACKETS: <strong style="color: ${player.color};">${player.racketCount}</strong></div>
+        </div>
+    `;
+
+    // Chart.js Performance History
+    const canvas = document.getElementById('pm-chart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (window.pmChartInstance) {
+        window.pmChartInstance.destroy();
+    }
+
+    const historyDates = player.history.map(h => {
+        const d = new Date(h.date);
+        return d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+    });
+    const historyPoints = player.history.map(h => h.points);
+
+    window.pmChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: historyDates,
+            datasets: [{
+                label: 'Points',
+                data: historyPoints,
+                borderColor: player.color,
+                backgroundColor: player.color + '20', /* transparent fill */
+                borderWidth: 3,
+                tension: 0.4, /* smooth curves */
+                pointBackgroundColor: player.color,
+                pointBorderColor: '#111',
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#888' },
+                    beginAtZero: true
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#888', maxRotation: 45, minRotation: 45 }
+                }
+            }
+        }
+    });
+
+    // Arsenal Horizontal scroll
+    const arsenalContainer = document.getElementById('pm-arsenal');
+    arsenalContainer.innerHTML = '';
+    
+    if (player.racketsList && player.racketsList.length > 0) {
+        player.racketsList.forEach(r => {
+            const rCard = document.createElement('div');
+            rCard.className = 'mini-racket-card';
+            rCard.style.setProperty('--glow-color', player.color);
+            rCard.innerHTML = `
+                <div class="mini-racket-img">
+                    <img src="${r.images[0]}" alt="${r.name}">
+                </div>
+                <div class="mini-racket-title">${r.name}</div>
+            `;
+            arsenalContainer.appendChild(rCard);
+        });
+    } else {
+        arsenalContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Aucune raquette dans le garage.</p>';
+    }
+}
+
+window.closePlayerModal = function() {
+    document.getElementById('player-modal').style.display = 'none';
 }
