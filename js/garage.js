@@ -220,18 +220,43 @@ function displayRackets(list) {
         `;
         favBtn.onclick = (e) => toggleFavorite(e, racket.name, favBtn);
 
+        const power = racket.stats?.Puissance || '-';
+        const control = racket.stats?.Contrôle || '-';
+        const spin = racket.stats?.Effet || '-';
+
+        let brand = racket.name.split(' ')[0] || '';
+        const shortName = racket.name.replace(new RegExp('^' + brand + '\\s?', 'i'), '');
+
         card.innerHTML = `
             ${badge}
             <div class="img-container">
                 <img src="${mainImage}" alt="${racket.name}" loading="lazy">
             </div>
-            <h2>${racket.name}</h2>
-            <div class="card-level">${racket.level}</div>
-            <div class="card-footer">
-                <span class="price-tag">${racket.price.replace('€', 'EUR')}</span>
-                <span class="view-arrow">➔</span>
+            
+            <div class="card-info-header">
+                <div>
+                    <h3 class="card-brand">${brand}</h3>
+                    <h2 class="card-title">${shortName || racket.name}</h2>
+                    <div class="card-status">
+                        <span class="status-dot" style="background: var(--glow-color);"></span>
+                        Available
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-action-overlay">
+                <button class="btn-detail card-btn-detail">VIEW DETAILS</button>
+                <div class="btn-row">
+                    <button class="btn-equip card-btn-equip">EQUIP</button>
+                    <button class="btn-stats card-btn-stats">STATS</button>
+                </div>
             </div>
         `;
+
+        card.querySelector('.card-action-overlay').onclick = (e) => e.stopPropagation();
+        card.querySelector('.card-btn-detail').onclick = (e) => { e.stopPropagation(); openModalData(racket); };
+        card.querySelector('.card-btn-stats').onclick = (e) => { e.stopPropagation(); openModalData(racket); };
+        card.querySelector('.card-btn-equip').onclick = (e) => { e.stopPropagation(); alert('Raquette ' + racket.name + ' équipée !'); };
 
         // Checkbox Comparateur
         const checkboxWrap = document.createElement('div');
