@@ -59,19 +59,11 @@ export function initProfile(rankingData, profilesData) {
                 <div class="p-stat"><span>Rackets</span><strong>${player.racketCount}</strong></div>
             </div>
             
-            <div class="card-action-overlay">
-                <button class="btn-stats profile-view-btn" style="background: linear-gradient(90deg, ${player.color}80, ${player.color}); color: #111;">VIEW PROFILE</button>
-            </div>
         `;
 
-        card.querySelector('.profile-view-btn').onclick = (e) => {
-            e.stopPropagation();
-            openPlayerModal(player);
-        };
-
         card.onclick = () => {
-            // Un clic sur la carte ou sur le bouton
             if (navigator.vibrate) navigator.vibrate(15);
+            openPlayerModal(player);
         };
 
         // Effets 3D Tilt
