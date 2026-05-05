@@ -3,7 +3,7 @@
         "name": "Matthias",
         "firstName": "Matthias",
         "lastName": "Bossard",
-        "nationalRank": 57769,
+        "nationalRank": 59967,
         "points": 37,
         "history": [
             {
@@ -55,6 +55,11 @@
                 "date": "2026-04-15",
                 "rank": 57769,
                 "points": 37
+            },
+            {
+                "date": "2026-05-05",
+                "rank": 59967,
+                "points": 37
             }
         ]
     },
@@ -62,7 +67,7 @@
         "name": "Tapin",
         "firstName": "Mathys",
         "lastName": "Tapin",
-        "nationalRank": 53794,
+        "nationalRank": 55820,
         "points": 44,
         "history": [
             {
@@ -109,6 +114,11 @@
                 "date": "2026-04-15",
                 "rank": 53794,
                 "points": 44
+            },
+            {
+                "date": "2026-05-05",
+                "rank": 55820,
+                "points": 44
             }
         ]
     },
@@ -116,8 +126,8 @@
         "name": "Alex",
         "firstName": "Alex",
         "lastName": "Begue",
-        "nationalRank": 38266,
-        "points": 92,
+        "nationalRank": 31492,
+        "points": 141,
         "history": [
             {
                 "date": "2025-10-01",
@@ -168,6 +178,11 @@
                 "date": "2026-04-15",
                 "rank": 38266,
                 "points": 92
+            },
+            {
+                "date": "2026-05-05",
+                "rank": 31492,
+                "points": 141
             }
         ]
     },
@@ -175,8 +190,8 @@
         "name": "Erwan",
         "firstName": "Erwan",
         "lastName": "Hillion",
-        "nationalRank": 46721,
-        "points": 60,
+        "nationalRank": 36427,
+        "points": 109,
         "history": [
             {
                 "date": "2025-10-01",
@@ -227,6 +242,11 @@
                 "date": "2026-04-15",
                 "rank": 46721,
                 "points": 60
+            },
+            {
+                "date": "2026-05-05",
+                "rank": 36427,
+                "points": 109
             }
         ]
     },
@@ -234,7 +254,7 @@
         "name": "Elouan",
         "firstName": "Elouan",
         "lastName": "Boisseau",
-        "nationalRank": 73383,
+        "nationalRank": 75945,
         "points": 19,
         "history": [
             {
@@ -286,6 +306,11 @@
                 "date": "2026-04-15",
                 "rank": 73383,
                 "points": 19
+            },
+            {
+                "date": "2026-05-05",
+                "rank": 75945,
+                "points": 19
             }
         ]
     },
@@ -293,7 +318,7 @@
         "name": "Mateo",
         "firstName": "Mateo",
         "lastName": "Albert",
-        "nationalRank": 82420,
+        "nationalRank": 85021,
         "points": 13,
         "history": [
             {
@@ -334,6 +359,11 @@
             {
                 "date": "2026-04-15",
                 "rank": 82420,
+                "points": 13
+            },
+            {
+                "date": "2026-05-05",
+                "rank": 85021,
                 "points": 13
             }
         ]
