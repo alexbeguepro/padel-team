@@ -126,7 +126,9 @@ async function scrapeRankings() {
                     await new Promise(r => setTimeout(r, 2000));
                     // Wait for table OR "No results"
                     await page.waitForFunction(() => {
-                        return document.querySelector('table tbody tr') || document.body.innerText.includes('Aucun résultat');
+                        return document.querySelector('table tbody tr') || 
+                               document.body.innerText.includes('Aucun résultat') ||
+                               document.body.innerText.includes('Aucun joueur pour les filtres sélectionnés');
                     }, { timeout: 8000 });
                 } catch (e) {
                     console.log("Timed out waiting for results.");
@@ -134,9 +136,12 @@ async function scrapeRankings() {
                 }
 
                 // Check for "No results" explicitly
-                const noResults = await page.evaluate(() => document.body.innerText.includes('Aucun résultat'));
+                const noResults = await page.evaluate(() => 
+                    document.body.innerText.includes('Aucun résultat') ||
+                    document.body.innerText.includes('Aucun joueur pour les filtres sélectionnés')
+                );
                 if (noResults) {
-                    console.log(`❌ No results found for ${player.firstName} ${player.lastName}`);
+                    console.log(`❌ No results found for ${player.firstName} ${player.lastName} (Player may be private/hidden on Ten'Up)`);
                     continue;
                 }
 
