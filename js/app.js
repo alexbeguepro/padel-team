@@ -5,12 +5,12 @@
 
 import { loadData } from './api.js';
 import { initUI } from './ui.js';
-import { initGarage } from './garage.js';
 import { renderRanking } from './ranking.js';
 import { initProfile } from './profile.js';
+import { initShowroom } from './showroom.js';
 
 let deferredPrompt;
-let currentView = 'garage';
+let currentView = 'showroom';
 
 async function bootstrap() {
     // 1. Init UI transversale (Thème, Splash Screen...)
@@ -20,9 +20,9 @@ async function bootstrap() {
     const { profilesData, rankingData } = await loadData();
 
     // 3. Init Vues
-    initGarage(profilesData);
     renderRanking(rankingData, profilesData);
     initProfile(rankingData, profilesData);
+    initShowroom(profilesData);
 
     // 4. Setup Global Navigation
     setupNavigation();
@@ -82,12 +82,12 @@ function setupPWAInstall() {
 }
 
 function setupNavigation() {
-    const navGarage = document.getElementById('nav-garage');
+    const navShowroom = document.getElementById('nav-showroom');
     const navRanking = document.getElementById('nav-ranking');
 
-    if (navGarage) navGarage.addEventListener('click', () => {
+    if (navShowroom) navShowroom.addEventListener('click', () => {
         if(navigator.vibrate) navigator.vibrate(10);
-        switchView('garage');
+        switchView('showroom');
     });
     if (navRanking) navRanking.addEventListener('click', () => {
         if(navigator.vibrate) navigator.vibrate(10);
@@ -100,17 +100,29 @@ function setupNavigation() {
     
     function checkDirection() {
         if (touchendX < touchstartX - 70) {
-            // Swipe Left
-            if(currentView === 'garage') {
-                if(navigator.vibrate) navigator.vibrate(15);
+            // Swipe Left (Next View)
+            if (currentView === 'showroom') {
+                if (navigator.vibrate) navigator.vibrate(15);
                 switchView('ranking');
+            } else if (currentView === 'ranking') {
+                if (navigator.vibrate) navigator.vibrate(15);
+                switchView('profile');
+            } else if (currentView === 'profile') {
+                if (navigator.vibrate) navigator.vibrate(15);
+                switchView('showroom');
             }
         }
         if (touchendX > touchstartX + 70) {
-            // Swipe Right
-            if(currentView === 'ranking') {
-                if(navigator.vibrate) navigator.vibrate(15);
-                switchView('garage');
+            // Swipe Right (Prev View)
+            if (currentView === 'profile') {
+                if (navigator.vibrate) navigator.vibrate(15);
+                switchView('ranking');
+            } else if (currentView === 'ranking') {
+                if (navigator.vibrate) navigator.vibrate(15);
+                switchView('showroom');
+            } else if (currentView === 'showroom') {
+                if (navigator.vibrate) navigator.vibrate(15);
+                switchView('profile');
             }
         }
     }
@@ -143,11 +155,6 @@ function switchView(viewName) {
     target.classList.add('active');
 
     document.getElementById('nav-' + viewName).classList.add('active');
-
-    const filterWrapper = document.getElementById('garage-filters');
-    if (filterWrapper) {
-        filterWrapper.style.display = (viewName === 'garage') ? 'flex' : 'none';
-    }
 
     if (viewName === 'ranking' && typeof confetti !== 'undefined') {
         confetti({

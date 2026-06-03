@@ -18,7 +18,7 @@
     <!-- PWA / Mobile Web App -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#050505">
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/0a0a0a/ffffff?text=PTG">
+    <link rel="apple-touch-icon" href="img/icon.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -57,11 +57,10 @@
         </div>
 
         <nav class="main-nav">
-            <button class="nav-btn active" onclick="switchView('garage')" id="nav-garage">
-                <span class="nav-text">Garage <span class="nav-active-text">[Active]</span></span>
+            <button class="nav-btn active" onclick="switchView('showroom')" id="nav-showroom">
+                <span class="nav-text">Showroom <span class="nav-active-text">[Active]</span></span>
                 <span class="nav-line"></span>
             </button>
-
             <button class="nav-btn" onclick="switchView('ranking')" id="nav-ranking">
                 <span class="nav-text">Classement <span class="nav-active-text">[Active]</span></span>
                 <span class="nav-line"></span>
@@ -87,58 +86,85 @@
         </div>
     </header>
 
-    <div id="garage-filters" class="subheader">
-        <h2 class="section-title">Personal Padel</h2>
-        <div class="search-sort-bar">
-            <div class="search-input-wrapper">
-                <svg class="search-icon-inside" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="search-input" class="search-input" placeholder="Search">
-            </div>
-            
-            <div class="select-group">
-                <span class="filter-label">Filter:</span>
-                <select id="brand-filter" class="select-filter">
-                    <option value="all">All</option>
-                    <option value="Babolat">Babolat</option>
-                    <option value="Head">Head</option>
-                    <option value="Nox">Nox</option>
-                    <option value="Bullpadel">Bullpadel</option>
-                    <option value="Adidas">Adidas</option>
-                    <option value="Kuikma">Kuikma</option>
-                    <option value="Joma">Joma</option>
-                </select>
-                <select id="level-filter" class="select-filter">
-                    <option value="all">Power</option>
-                    <option value="Débutant">Débutant</option>
-                    <option value="Intermédiaire">Intermédiaire</option>
-                    <option value="Avancé">Avancé</option>
-                    <option value="Expert">Expert</option>
-                </select>
-                <select id="control-filter" class="select-filter">
-                    <option value="all">Control</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="filter-wrapper" style="display:none;">
-            <div class="filter-bar" id="filter-bar">
-            <button class="filter-btn active" onclick="filterByOwner('all')" id="btn-all">
-                Tout l'Arsenal
-            </button>
-            <!-- Player buttons injected here by JS -->
-        </div>
-        </div>
-    </div>
-
-    <!-- FLOATING COMPARE BUTTON -->
-    <button id="floating-compare-btn" class="floating-compare-btn" onclick="openCompareModal()" style="display: none;">
-        COMPARER (<span id="compare-count">0</span>/2)
-    </button>
-
     <main class="container">
-        <!-- VUE GARAGE -->
-        <section id="garage-view" class="view-section active">
-            <div class="racket-grid" id="racket-container">
+
+        <!-- VUE SHOWROOM (CINEMATIC) -->
+        <section id="showroom-view" class="view-section active">
+            <div class="sr-bg-brand-watermark" id="sr-watermark">PADEL</div>
+            <div class="showroom-layout">
+                <!-- Zone de gauche : Présentation visuelle de la raquette -->
+                <div class="sr-showcase">
+                    <button class="sr-nav-btn sr-prev-btn" id="sr-prev" aria-label="Raquette précédente">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    
+                    <div class="sr-racket-display">
+                        <div class="sr-glow-backdrop" id="sr-glow"></div>
+                        <div class="sr-racket-wrapper" id="sr-racket-wrap">
+                            <img id="sr-active-img" src="" alt="Raquette active">
+                        </div>
+                        <!-- Miniatures d'angles alternatifs -->
+                        <div class="sr-angle-indicators" id="sr-angles"></div>
+                    </div>
+
+                    <button class="sr-nav-btn sr-next-btn" id="sr-next" aria-label="Raquette suivante">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+
+                <!-- Zone de droite : Caractéristiques & Télémétrie -->
+                <div class="sr-details">
+                    <div class="sr-header">
+                        <div class="sr-meta">
+                            <span class="sr-owner-tag" id="sr-owner-badge"><span class="sr-owner-dot"></span> ALEX</span>
+                            <span class="sr-level-tag" id="sr-level">EXPERT</span>
+                        </div>
+                        <h1 class="sr-title" id="sr-title">Nom de la Raquette</h1>
+                        <div class="sr-price" id="sr-price">0.00 EUR</div>
+                    </div>
+                    
+                    <p class="sr-description" id="sr-desc">Description de la raquette...</p>
+
+                    <div class="sr-specs-grid">
+                        <div class="sr-spec-card">
+                            <span class="sr-spec-label">Poids</span>
+                            <span class="sr-spec-value" id="sr-spec-weight">-</span>
+                        </div>
+                        <div class="sr-spec-card">
+                            <span class="sr-spec-label">Forme</span>
+                            <span class="sr-spec-value" id="sr-spec-shape">-</span>
+                        </div>
+                        <div class="sr-spec-card">
+                            <span class="sr-spec-label">Mousse</span>
+                            <span class="sr-spec-value" id="sr-spec-foam">-</span>
+                        </div>
+                        <div class="sr-spec-card">
+                            <span class="sr-spec-label">Surface</span>
+                            <span class="sr-spec-value" id="sr-spec-surface">-</span>
+                        </div>
+                    </div>
+
+                    <div class="sr-telemetry">
+                        <h3 class="sr-telemetry-title">TÉLÉMÉTRIE DE PERFORMANCE</h3>
+                        <div class="sr-telemetry-grid" id="sr-telemetry-stats">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <div class="sr-actions">
+                        <a id="sr-buy-link" href="#" target="_blank" class="sr-buy-btn">
+                            Acheter la Raquette
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sélecteur horizontal de bas de page -->
+            <div class="sr-carousel-container">
+                <div class="sr-carousel-track" id="sr-carousel">
+                    <!-- Injected by JS -->
+                </div>
             </div>
         </section>
 
@@ -250,21 +276,6 @@
         </div>
     </div>
 
-    <!-- MODALE COMPARATEUR -->
-    <div class="compare-overlay" id="compare-modal">
-        <div class="compare-panel">
-            <button class="close-btn" onclick="closeCompareModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-            <h2 class="compare-title">ANALYSE BALISTIQUE</h2>
-            <div class="compare-layout" id="compare-layout">
-                <!-- Les colonnes de raquettes seront injectées ici -->
-            </div>
-        </div>
     <script src="js/app.js" type="module"></script>
     
     <!-- MODALE PROFIL JOUEUR -->
