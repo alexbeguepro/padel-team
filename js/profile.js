@@ -91,6 +91,8 @@ export function initProfile(rankingData, profilesData) {
 window.openPlayerModal = function(player) {
     const modal = document.getElementById('player-modal');
     modal.style.display = 'flex';
+    void modal.offsetWidth;
+    modal.classList.add('show');
     
     // Header
     const header = document.getElementById('pm-header');
@@ -178,5 +180,11 @@ window.openPlayerModal = function(player) {
 }
 
 window.closePlayerModal = function() {
-    document.getElementById('player-modal').style.display = 'none';
+    const modal = document.getElementById('player-modal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        if (!modal.classList.contains('show')) {
+            modal.style.display = 'none';
+        }
+    }, 400);
 }

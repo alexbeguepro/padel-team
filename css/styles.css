@@ -625,6 +625,10 @@ body {
     border-radius: 2px;
 }
 
+.points-col {
+    text-align: right;
+}
+
 .rank-points {
     font-size: 1.2rem;
     font-weight: 600;
@@ -2237,11 +2241,11 @@ body {
 @media (max-width: 992px) {
     .showroom-layout {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 20px;
     }
     
     .sr-showcase {
-        height: 420px;
+        height: 380px;
     }
     
     .sr-bg-brand-watermark {
@@ -2250,76 +2254,289 @@ body {
     }
 }
 
-@media (max-width: 576px) {
-    .sr-showcase {
-        height: 340px;
-        padding: 5px;
+@media (max-width: 768px) {
+    /* Top Navigation bar optimization */
+    .top-nav-bar {
+        padding: 0 15px;
+        height: 60px;
     }
-    
-    .sr-prev-btn {
-        left: 10px;
-        width: 40px;
-        height: 40px;
-        transform: translateY(-50%);
+    .brand {
+        gap: 8px;
     }
-    
-    .sr-next-btn {
-        right: 10px;
-        width: 40px;
-        height: 40px;
-        transform: translateY(-50%);
+    .brand-icon {
+        width: 20px;
+        height: 20px;
     }
-    
-    .sr-prev-btn:hover,
-    .sr-next-btn:hover {
-        transform: translateY(-50%) scale(1.08);
-    }
-    
-    .sr-prev-btn:active,
-    .sr-next-btn:active {
-        transform: translateY(-50%) scale(0.95);
-    }
-    
-    .sr-details {
-        padding: 20px 15px;
-    }
-    
-    .sr-title {
-        font-size: 1.6rem;
-    }
-    
-    .sr-specs-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    
-    .sr-telemetry-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-    
-    .sr-gauge-container {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .sr-gauge-val {
+    .brand-title {
         font-size: 0.85rem;
+        letter-spacing: 0.05em;
+    }
+    .brand-subtitle {
+        font-size: 0.65rem;
+        letter-spacing: 0.05em;
+    }
+    .main-nav {
+        gap: 12px;
+    }
+    .nav-btn {
+        font-size: 0.8rem;
+        padding: 0 5px;
+    }
+    .nav-active-text {
+        display: none !important; /* Hide active text suffix on mobile to fit elements */
+    }
+    .header-right {
+        gap: 10px;
+    }
+    .icon-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Container margin */
+    .container {
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    /* Viewport-based fit for Showroom on mobile */
+    #showroom-view {
+        height: calc(100vh - 80px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+
+    .showroom-layout {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 0; /* allows flex child to shrink below content size */
+    }
+
+    .sr-showcase {
+        flex: 0 0 210px;
+        height: 210px;
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .sr-prev-btn, .sr-next-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .sr-racket-wrapper img {
+        max-height: 90%;
+        max-width: 90%;
+    }
+
+    .sr-details {
+        flex: 1;
+        padding: 15px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .sr-header {
+        margin-bottom: 6px;
+    }
+
+    .sr-meta {
+        margin-bottom: 4px;
+    }
+
+    .sr-title {
+        font-size: 1.3rem;
+        margin-bottom: 2px;
+    }
+
+    .sr-price {
+        font-size: 1.05rem;
+    }
+
+    .sr-description {
+        font-size: 0.8rem;
+        line-height: 1.3;
+        margin-bottom: 8px;
+        /* Truncate long descriptions to fit screen height */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .sr-specs-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .sr-spec-card {
+        padding: 6px 4px;
+        gap: 2px;
+        align-items: center;
+        text-align: center;
+    }
+
+    .sr-spec-label {
+        font-size: 0.55rem;
+    }
+
+    .sr-spec-value {
+        font-size: 0.7rem;
+    }
+
+    .sr-telemetry {
+        margin-bottom: 6px;
+    }
+
+    .sr-telemetry-title {
+        font-size: 0.65rem;
+        margin-bottom: 4px;
+    }
+
+    /* 6 columns for telemetry to display inline */
+    .sr-telemetry-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 5px;
+    }
+
+    .sr-telemetry-item {
+        gap: 2px;
+    }
+
+    .sr-gauge-container {
+        width: 38px;
+        height: 38px;
+    }
+
+    .sr-gauge-val {
+        font-size: 0.7rem;
+    }
+
+    .sr-telemetry-label {
+        font-size: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .sr-actions {
+        margin-top: 4px;
+    }
+
+    .sr-buy-btn {
+        padding: 8px 16px;
+        font-size: 0.75rem;
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Showroom Bottom List wrapping (no horizontal scrolling) */
+    .sr-carousel-container {
+        margin-top: 8px;
+        padding: 2px 0;
+        overflow-x: visible; /* Disable horizontal scrolling */
+    }
+
+    .sr-carousel-track {
+        display: flex;
+        flex-wrap: wrap; /* Wrap elements into a grid */
+        justify-content: center;
+        gap: 6px;
     }
 
     .sr-carousel-item {
-        flex: 0 0 95px;
-        width: 95px;
-        height: 110px;
-        padding: 8px;
+        flex: 0 0 calc(25% - 6px); /* 4 items per row */
+        width: calc(25% - 6px);
+        height: 72px; /* shorter height to prevent scrolling down the page */
+        padding: 4px;
     }
-    
+
     .sr-carousel-img {
-        height: 52px;
-        margin-bottom: 5px;
+        height: 38px;
+        margin-bottom: 2px;
     }
-    
+
     .sr-carousel-title {
-        font-size: 0.6rem;
+        font-size: 0.48rem;
+    }
+
+    /* Profile player cards responsive 2-column layout */
+    #profile-view .racket-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+
+    #profile-view .player-card {
+        padding: 15px !important;
+        align-items: center;
+        text-align: center;
+    }
+
+    #profile-view .player-avatar-large {
+        width: 64px !important;
+        height: 64px !important;
+        font-size: 1.3rem !important;
+        margin-top: 5px !important;
+        box-shadow: 0 0 15px var(--glow-color) !important;
+    }
+
+    #profile-view .card-info-header {
+        margin-top: 10px !important;
+        transform: none !important; /* Disable translate hover shift on mobile */
+    }
+
+    #profile-view .card-title {
+        font-size: 0.9rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    #profile-view .card-status {
+        font-size: 0.7rem !important;
+    }
+
+    #profile-view .profile-stats {
+        margin-top: 15px !important;
+        padding: 0 !important;
+        gap: 8px !important;
+    }
+
+    #profile-view .p-stat span {
+        font-size: 0.55rem !important;
+    }
+
+    #profile-view .p-stat strong {
+        font-size: 0.8rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Extra tiny adjustment if viewport height is extremely short */
+    #showroom-view {
+        height: calc(100vh - 70px);
+    }
+    .sr-showcase {
+        flex: 0 0 160px;
+        height: 160px;
+    }
+    .sr-prev-btn {
+        left: 5px;
+    }
+    .sr-next-btn {
+        right: 5px;
     }
 }
