@@ -385,6 +385,31 @@
                     "Effet": 5,
                     "Tolérance": 6
                 }
+            },
+            {
+                "name": "Babolat Air Viper 2025",
+                "level": "Expert",
+                "images": [
+                    "img/erwan/babolat-air-viper-face.png",
+                    "img/erwan/babolat-air-viper-cote.png"
+                ],
+                "url": "https://www.padelreference.com/fr/raquettes-de-padel-babolat/p/raquette-de-padel-babolat-air-viper-2025",
+                "price": "249,90 €",
+                "specs": {
+                    "weight": "355g",
+                    "shape": "Hybride",
+                    "foam": "X-EVA",
+                    "surface": "Carbone 16K"
+                },
+                "description": "La raquette BABOLAT Air Viper 2025 vous offrira une incroyable légèreté et une maniabilité à toute épreuve pour vous permettre de voler sur le terrain.",
+                "stats": {
+                    "Puissance": 9,
+                    "Contrôle": 8,
+                    "Confort": 7,
+                    "Maniabilité": 10,
+                    "Effet": 9,
+                    "Tolérance": 7
+                }
             }
         ]
     }
