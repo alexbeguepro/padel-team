@@ -1,239 +1,282 @@
 /**
  * showroom.js
- * Gère la logique d'affichage du catalogue Showroom sous forme de défilement vertical.
- * Effet 3D Tilt individuel, angles alternatifs par raquette et animation des jauges au scroll.
+ * Vue Showroom : hero animé, filtres par pilote et grille de cartes « affiche ».
+ * Chaque carte porte la couleur de son propriétaire via la variable CSS --pc.
  */
 
-let allRackets = [];
+import { reveal, countUp, levelClass, esc, reducedMotion } from './ui.js';
 
-export function initShowroom(profilesData) {
+let allRackets = [];
+let activeOwner = 'all';
+let owners = [];
+
+export function initShowroom(profilesData, rankingData = []) {
     allRackets = [];
+    owners = [];
+
     profilesData.forEach(profile => {
+        owners.push({ name: profile.name, color: profile.color, count: profile.rackets.length });
         profile.rackets.forEach(r => {
-            allRackets.push({
-                ...r,
-                ownerName: profile.name,
-                ownerColor: profile.color
-            });
+            allRackets.push({ ...r, ownerName: profile.name, ownerColor: profile.color });
         });
     });
 
-    if (allRackets.length === 0) return;
-
-    renderShowroomFeed();
+    renderHeroStats(rankingData);
+    renderFilters();
+    renderGrid();
 }
 
-function renderShowroomFeed() {
+/* ------------------------------------------------------------------- HERO */
+function renderHeroStats(rankingData) {
+    const host = document.getElementById('hero-stats');
+    if (!host) return;
+
+    const points = rankingData.map(p => p.points || 0);
+    const bestPoints = points.length ? Math.max(...points) : 0;
+    const priceValues = allRackets
+        .map(r => parseFloat(String(r.price).replace(/[^\d,.]/g, '').replace(',', '.')))
+        .filter(v => !isNaN(v));
+    const maxPrice = priceValues.length ? Math.round(Math.max(...priceValues)) : 0;
+
+    const tiles = [
+        { val: allRackets.length, label: 'Raquettes' },
+        { val: owners.length, label: 'Pilotes' },
+        { val: bestPoints, label: 'Meilleur score' },
+        { val: maxPrice, label: 'Pièce maîtresse', suffix: ' €' }
+    ];
+
+    host.innerHTML = tiles
+        .map(t => `<div class="hero-stat"><b data-count="${t.val}" data-suffix="${t.suffix || ''}">0</b><span>${t.label}</span></div>`)
+        .join('');
+
+    host.querySelectorAll('[data-count]').forEach(el => {
+        countUp(el, Number(el.dataset.count), { suffix: el.dataset.suffix });
+    });
+}
+
+/* ---------------------------------------------------------------- FILTRES */
+function renderFilters() {
+    const host = document.getElementById('sr-filters');
+    if (!host) return;
+
+    const chips = [
+        `<button class="filter-btn active" data-owner="all">Tout le garage</button>`,
+        ...owners.map(o => `
+            <button class="filter-btn" data-owner="${esc(o.name)}" style="--pc:${o.color}">
+                <i class="chip-dot"></i>${esc(o.name)}
+            </button>`)
+    ];
+
+    host.innerHTML = chips.join('');
+
+    host.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (btn.dataset.owner === activeOwner) return;
+            activeOwner = btn.dataset.owner;
+            host.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (navigator.vibrate) navigator.vibrate(8);
+            renderGrid();
+        });
+    });
+}
+
+/* ------------------------------------------------------------------ GRILLE */
+function renderGrid() {
     const feed = document.getElementById('sr-feed');
+    const counter = document.getElementById('sr-count');
     if (!feed) return;
+
+    const list = activeOwner === 'all'
+        ? allRackets
+        : allRackets.filter(r => r.ownerName === activeOwner);
+
+    if (counter) {
+        counter.innerHTML = `<b>${list.length}</b> raquette${list.length > 1 ? 's' : ''} affichée${list.length > 1 ? 's' : ''}`;
+    }
+
     feed.innerHTML = '';
 
-    allRackets.forEach((racket, index) => {
-        const row = document.createElement('div');
-        row.className = 'sr-racket-row';
-        row.id = `racket-row-${index}`;
-        row.style.setProperty('--glow-color', racket.ownerColor);
+    if (!list.length) {
+        feed.innerHTML = `<div class="empty-state"><span class="emoji">🎾</span>Aucune raquette pour ce pilote.</div>`;
+        return;
+    }
 
-        // Indicateurs d'angles (uniquement s'il y a plusieurs images)
-        let angleIndicatorsHTML = '';
-        if (racket.images && racket.images.length > 1) {
-            angleIndicatorsHTML = `<div class="sr-angle-indicators" id="sr-angles-${index}">`;
-            racket.images.forEach((imgSrc, imgIdx) => {
-                const activeClass = imgIdx === 0 ? 'active' : '';
-                angleIndicatorsHTML += `<div class="sr-angle-dot ${activeClass}" title="Angle ${imgIdx + 1}" data-index="${imgIdx}"></div>`;
-            });
-            angleIndicatorsHTML += `</div>`;
-        }
-
-        // Caractéristiques techniques (specs)
-        const specs = racket.specs || {};
-        const weight = specs.weight || '-';
-        const shape = specs.shape || '-';
-        const foam = specs.foam || '-';
-        const surface = specs.surface || '-';
-
-        // Télémétrie (Jauges circulaires)
-        let telemetryHTML = '';
-        if (racket.stats) {
-            for (const [key, val] of Object.entries(racket.stats)) {
-                const formattedVal = val < 10 ? '0' + val : val;
-                // Circonférence d'un cercle r=28 : 176
-                const offset = 176 - (val * 17.6);
-                telemetryHTML += `
-                    <div class="sr-telemetry-item">
-                        <div class="sr-gauge-container">
-                            <svg class="sr-gauge-svg" viewBox="0 0 70 70">
-                                <circle class="sr-gauge-bg" cx="35" cy="35" r="28" />
-                                <circle class="sr-gauge-fill" cx="35" cy="35" r="28" style="stroke-dasharray: 176; stroke-dashoffset: 176;" data-offset="${offset}" />
-                            </svg>
-                            <div class="sr-gauge-val">${formattedVal}</div>
-                        </div>
-                        <span class="sr-telemetry-label">${key}</span>
-                    </div>
-                `;
-            }
-        }
-
-        row.innerHTML = `
-            <!-- Zone Showcase de gauche (Image de la raquette) -->
-            <div class="sr-showcase" id="sr-showcase-${index}">
-                <div class="sr-glow-backdrop"></div>
-                <div class="sr-racket-wrapper" id="sr-racket-wrap-${index}">
-                    <img id="sr-img-${index}" src="${racket.images[0]}" alt="${racket.name}" loading="lazy">
-                </div>
-                ${angleIndicatorsHTML}
-            </div>
-
-            <!-- Zone de droite (Détails & Performance) -->
-            <div class="sr-details">
-                <div class="sr-header">
-                    <div class="sr-meta">
-                        <span class="sr-owner-tag" style="border-left-color: ${racket.ownerColor};">
-                            <span class="sr-owner-dot" style="background: ${racket.ownerColor};"></span>
-                            ${racket.ownerName.toUpperCase()}
-                        </span>
-                        <span class="sr-level-tag">${racket.level.toUpperCase()}</span>
-                    </div>
-                    <h2 class="sr-title">${racket.name}</h2>
-                    <div class="sr-price">${racket.price.replace('€', ' EUR')}</div>
-                </div>
-
-                <p class="sr-description">${racket.description}</p>
-
-                <div class="sr-specs-grid">
-                    <div class="sr-spec-card">
-                        <span class="sr-spec-label">Poids</span>
-                        <span class="sr-spec-value">${weight}</span>
-                    </div>
-                    <div class="sr-spec-card">
-                        <span class="sr-spec-label">Forme</span>
-                        <span class="sr-spec-value">${shape}</span>
-                    </div>
-                    <div class="sr-spec-card">
-                        <span class="sr-spec-label">Mousse</span>
-                        <span class="sr-spec-value">${foam}</span>
-                    </div>
-                    <div class="sr-spec-card">
-                        <span class="sr-spec-label">Surface</span>
-                        <span class="sr-spec-value">${surface}</span>
-                    </div>
-                </div>
-
-                <div class="sr-telemetry">
-                    <h3 class="sr-telemetry-title">TÉLÉMÉTRIE DE PERFORMANCE</h3>
-                    <div class="sr-telemetry-grid">
-                        ${telemetryHTML}
-                    </div>
-                </div>
-
-                <div class="sr-actions">
-                    <a href="${racket.url || '#'}" target="_blank" class="sr-buy-btn">
-                        Acheter la Raquette
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </a>
-                </div>
-            </div>
-        `;
-
-        feed.appendChild(row);
-
-        // Attachement du Tilt 3D individuel
-        setupRowTilt(index);
-
-        // Attachement du changement d'angles
-        setupRowAngles(index, racket);
-
-        // Animation d'entrée au défilement (scrollObserver)
-        import('./ui.js').then(module => {
-            if (module.scrollObserver) {
-                module.scrollObserver.observe(row);
-            }
-        });
+    list.forEach((racket, index) => {
+        const card = buildCard(racket, index);
+        feed.appendChild(card);
+        reveal(card, index);
+        setupTilt(card);
+        setupAngles(card, racket);
     });
 
-    // Animation progressive des jauges au scroll
-    setupGaugesObserver();
+    animateGaugesOnScroll(feed);
 }
 
-function setupRowTilt(index) {
-    const wrapper = document.getElementById(`sr-racket-wrap-${index}`);
-    const racketImg = document.getElementById(`sr-img-${index}`);
-    if (!wrapper || !racketImg) return;
+function buildCard(racket, index) {
+    const card = document.createElement('article');
+    card.className = 'sr-card';
+    card.style.setProperty('--pc', racket.ownerColor);
 
-    wrapper.addEventListener('mousemove', (e) => {
-        const rect = wrapper.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateY = ((x - centerX) / centerX) * 20; 
-        const rotateX = ((centerY - y) / centerY) * 20; 
-        
-        racketImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`;
+    const { brand, model } = splitName(racket.name);
+    const specs = racket.specs || {};
+
+    const angles = (racket.images && racket.images.length > 1)
+        ? `<div class="sr-angles">${racket.images
+            .map((_, i) => `<button class="sr-angle-dot ${i === 0 ? 'active' : ''}" data-index="${i}"
+                     aria-label="Angle ${i + 1}"></button>`)
+            .join('')}</div>`
+        : '';
+
+    const specRows = [
+        ['Poids', specs.weight],
+        ['Forme', specs.shape],
+        ['Mousse', specs.foam],
+        ['Surface', specs.surface]
+    ].map(([label, value]) => `
+        <div class="sr-spec">
+            <dt>${label}</dt>
+            <dd>${esc(value || '—')}</dd>
+        </div>`).join('');
+
+    const gauges = Object.entries(racket.stats || {}).map(([key, val]) => {
+        const offset = 176 - (Number(val) * 17.6);
+        return `
+            <div class="sr-gauge">
+                <div class="sr-gauge-ring">
+                    <svg viewBox="0 0 70 70" aria-hidden="true">
+                        <circle class="sr-gauge-bg" cx="35" cy="35" r="28" />
+                        <circle class="sr-gauge-fill" cx="35" cy="35" r="28" data-offset="${offset}" />
+                    </svg>
+                    <span class="sr-gauge-val">${String(val).padStart(2, '0')}</span>
+                </div>
+                <span class="sr-gauge-label">${esc(key)}</span>
+            </div>`;
+    }).join('');
+
+    card.innerHTML = `
+        <div class="sr-stage">
+            <span class="chip sr-owner"><i class="chip-dot"></i>${esc(racket.ownerName)}</span>
+            <span class="sr-price">${esc(racket.price)}</span>
+            <div class="sr-glow" aria-hidden="true"></div>
+            <div class="sr-frame">
+                <img src="${esc(racket.images[0])}" alt="${esc(racket.name)}"
+                     loading="${index < 3 ? 'eager' : 'lazy'}" decoding="async">
+            </div>
+            ${angles}
+        </div>
+
+        <div class="sr-body">
+            <div class="sr-head">
+                <div>
+                    ${brand ? `<span class="sr-brand">${esc(brand)}</span>` : ''}
+                    <h3 class="sr-title">${esc(model)}</h3>
+                </div>
+                <span class="chip chip-level ${levelClass(racket.level)}">${esc(racket.level)}</span>
+            </div>
+
+            <p class="sr-desc">${esc(racket.description || '')}</p>
+
+            <dl class="sr-specs">${specRows}</dl>
+
+            <div class="sr-telemetry">
+                <h4 class="sr-telemetry-title">Télémétrie</h4>
+                <div class="sr-gauges">${gauges}</div>
+            </div>
+
+            <div class="sr-actions">
+                <a class="btn-ghost" href="${esc(racket.url || '#')}" target="_blank" rel="noopener noreferrer">
+                    Voir l'offre
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    `;
+
+    return card;
+}
+
+/**
+ * « Babolat Counter Viper 2025 » → marque « Babolat », modèle « Counter Viper 2025 ».
+ * Si le nom tient en un seul mot, on garde tout dans le modèle.
+ */
+function splitName(name = '') {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length < 2) return { brand: '', model: name };
+    return { brand: parts[0], model: parts.slice(1).join(' ') };
+}
+
+/* ------------------------------------------------------------ INTERACTIONS */
+function setupTilt(card) {
+    if (reducedMotion) return;
+
+    const frame = card.querySelector('.sr-frame');
+    const img = card.querySelector('.sr-frame img');
+    if (!frame || !img) return;
+
+    frame.addEventListener('mousemove', (e) => {
+        const rect = frame.getBoundingClientRect();
+        const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * 26;
+        const rotateX = (0.5 - (e.clientY - rect.top) / rect.height) * 26;
+        img.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
     });
 
-    wrapper.addEventListener('mouseleave', () => {
-        racketImg.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+    frame.addEventListener('mouseleave', () => {
+        img.style.transform = '';
     });
 }
 
-function setupRowAngles(index, racket) {
-    const dots = document.querySelectorAll(`#sr-angles-${index} .sr-angle-dot`);
-    const imgEl = document.getElementById(`sr-img-${index}`);
-    if (!dots.length || !imgEl) return;
+function setupAngles(card, racket) {
+    const dots = card.querySelectorAll('.sr-angle-dot');
+    const img = card.querySelector('.sr-frame img');
+    if (!dots.length || !img) return;
+
+    const switchTo = (dot) => {
+        if (dot.classList.contains('active')) return;
+        const idx = Number(dot.dataset.index);
+
+        if (navigator.vibrate) navigator.vibrate(5);
+        dots.forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+
+        if (reducedMotion) {
+            img.src = racket.images[idx];
+            return;
+        }
+
+        img.style.opacity = '0';
+        img.style.transform = 'rotateY(38deg) scale(.92)';
+
+        setTimeout(() => {
+            img.src = racket.images[idx];
+            img.style.transform = 'rotateY(-38deg) scale(.92)';
+            void img.offsetWidth; // reflow pour rejouer la transition
+            img.style.transform = '';
+            img.style.opacity = '1';
+        }, 180);
+    };
 
     dots.forEach(dot => {
-        const switchFunc = () => {
-            const imgIdx = parseInt(dot.getAttribute('data-index'));
-            if (dot.classList.contains('active')) return;
-
-            if (navigator.vibrate) navigator.vibrate(5);
-
-            // Animation de flip
-            imgEl.style.transition = 'transform 0.25s ease, opacity 0.25s ease';
-            imgEl.style.transform = 'rotateY(90deg) scale(0.9)';
-            imgEl.style.opacity = '0.3';
-            
-            setTimeout(() => {
-                imgEl.src = racket.images[imgIdx];
-                imgEl.style.transform = 'rotateY(-90deg) scale(0.9)';
-                
-                void imgEl.offsetWidth; // Reflow
-                
-                imgEl.style.transform = 'rotateY(0deg) scale(1)';
-                imgEl.style.opacity = '1';
-                
-                dots.forEach(d => d.classList.remove('active'));
-                dot.classList.add('active');
-                
-                setTimeout(() => {
-                    imgEl.style.transition = 'transform 0.1s ease, filter 0.5s ease';
-                }, 250);
-            }, 200);
-        };
-
-        dot.onclick = switchFunc;
-        dot.onmouseenter = switchFunc;
+        dot.addEventListener('click', () => switchTo(dot));
+        dot.addEventListener('mouseenter', () => switchTo(dot));
     });
 }
 
-function setupGaugesObserver() {
+/** Les jauges se remplissent quand la carte entre dans le viewport. */
+function animateGaugesOnScroll(root) {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const fills = entry.target.querySelectorAll('.sr-gauge-fill');
-                fills.forEach(fill => {
-                    const targetOffset = fill.getAttribute('data-offset');
-                    fill.style.strokeDashoffset = targetOffset;
-                });
-                observer.unobserve(entry.target);
-            }
+            if (!entry.isIntersecting) return;
+            entry.target.querySelectorAll('.sr-gauge-fill').forEach(fill => {
+                fill.style.strokeDashoffset = fill.dataset.offset;
+            });
+            observer.unobserve(entry.target);
         });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.2 });
 
-    document.querySelectorAll('.sr-racket-row').forEach(row => {
-        observer.observe(row);
-    });
+    root.querySelectorAll('.sr-card').forEach(card => observer.observe(card));
 }

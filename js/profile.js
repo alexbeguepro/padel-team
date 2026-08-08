@@ -1,190 +1,253 @@
 /**
  * profile.js
- * Gère l'affichage de la galerie des joueurs (Pilotes).
+ * Vue Pilotes : cartes joueurs enrichies (stats, tendance, aperçu de l'arsenal)
+ * et modale de détail avec courbe de progression Chart.js.
  */
 
-export function initProfile(rankingData, profilesData) {
+import { reveal, sparkline, initials, pointsDelta, deltaChip, formatNum, esc, levelClass } from './ui.js';
+
+const MEDALS = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
+export function initProfile(players) {
     const container = document.getElementById('profile-container');
     if (!container) return;
 
-    container.innerHTML = ''; // Reset
-
-    // Fusionner les données
-    const players = rankingData.map(rankData => {
-        // Find matching profile for color and rackets
-        const prof = profilesData.find(p => p.name.toLowerCase() === rankData.name.toLowerCase() || p.name.toLowerCase() === rankData.firstName.toLowerCase());
-        
-        return {
-            ...rankData,
-            color: prof ? prof.color : '#00f0ff',
-            racketCount: prof && prof.rackets ? prof.rackets.length : 0,
-            racketsList: prof && prof.rackets ? prof.rackets : []
-        };
-    });
-
-    // Sort by points (rank)
-    players.sort((a, b) => b.points - a.points);
+    container.innerHTML = '';
 
     players.forEach((player, index) => {
-        const card = document.createElement('div');
-        card.className = 'card player-card';
-        // Passons la couleur personnalisée dans une variable CSS locale
-        card.style.setProperty('--glow-color', player.color);
+        const card = document.createElement('article');
+        card.className = 'player-card';
+        card.style.setProperty('--pc', player.color);
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Voir le profil de ${player.firstName} ${player.lastName}`);
 
-        // Position
-        const pos = index + 1;
-        let posDisplay = pos;
-        if (pos === 1) posDisplay = '🥇 1er';
-        else if (pos === 2) posDisplay = '🥈 2ème';
-        else if (pos === 3) posDisplay = '🥉 3ème';
+        const delta = pointsDelta(player.history);
+        const series = player.history.slice(-14).map(h => h.points);
+        const medal = MEDALS[player.position] || '';
+
+        const thumbs = player.rackets.slice(0, 3).map(r => `
+            <div class="player-thumb"><img src="${esc(r.images[0])}" alt="${esc(r.name)}" loading="lazy"></div>
+        `).join('');
 
         card.innerHTML = `
-            <div class="player-avatar-large" style="background: ${player.color}20; border-color: ${player.color}50;">
-                <span style="color: ${player.color};">${player.firstName.substring(0, 1)}${player.lastName.substring(0, 1)}</span>
-            </div>
-            
-            <div class="card-info-header" style="justify-content: center; text-align: center; margin-top: 20px;">
-                <div>
-                    <h2 class="card-title">${player.firstName} ${player.lastName}</h2>
-                    <div class="card-status" style="justify-content: center;">
-                        <span class="status-dot" style="background: var(--glow-color);"></span>
-                        Active
-                    </div>
+            <div class="player-top">
+                <div class="avatar">${initials(player.firstName, player.lastName)}</div>
+                <div class="player-id">
+                    <h3 class="player-name">${esc(player.firstName)} ${esc(player.lastName)}</h3>
+                    <span class="player-pos">${medal} ${ordinal(player.position)} de l'équipe</span>
                 </div>
             </div>
 
-            <div class="profile-stats" style="margin-top: 30px;">
-                <div class="p-stat"><span>Rank</span><strong style="color: var(--glow-color);">${posDisplay}</strong></div>
-                <div class="p-stat"><span>Points</span><strong>${player.points}</strong></div>
-                <div class="p-stat"><span>Rackets</span><strong>${player.racketCount}</strong></div>
+            <div class="player-stats">
+                <div class="player-stat">
+                    <b>${formatNum(player.points)}</b><span>Points</span>
+                </div>
+                <div class="player-stat">
+                    <b>${player.nationalRank ? formatNum(player.nationalRank) : '—'}</b><span>Rang nat.</span>
+                </div>
+                <div class="player-stat">
+                    <b>${player.racketCount}</b><span>Raquettes</span>
+                </div>
             </div>
-            
+
+            <div class="player-spark">${sparkline(series, { width: 260, height: 46 })}</div>
+
+            <div class="player-arsenal">
+                ${thumbs}
+                <span class="player-more">
+                    ${deltaChip(delta)}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </span>
+            </div>
         `;
 
-        card.onclick = () => {
-            if (navigator.vibrate) navigator.vibrate(15);
+        const open = () => {
+            if (navigator.vibrate) navigator.vibrate(12);
             openPlayerModal(player);
         };
 
-        // Effets 3D Tilt
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -10;
-            const rotateY = ((x - centerX) / centerX) * 10;
-
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                open();
+            }
         });
 
         container.appendChild(card);
-        setTimeout(() => { card.classList.add('visible'); }, index * 100);
+        reveal(card, index);
     });
 }
 
-window.openPlayerModal = function(player) {
+function ordinal(n) {
+    return n === 1 ? '1er' : `${n}ème`;
+}
+
+/* ---------------------------------------------------------------- MODALE */
+let chartInstance = null;
+
+export function openPlayerModal(player) {
     const modal = document.getElementById('player-modal');
-    modal.style.display = 'flex';
-    void modal.offsetWidth;
+    const panel = document.getElementById('player-modal-content');
+    if (!modal || !panel) return;
+
+    panel.style.setProperty('--pc', player.color);
     modal.classList.add('show');
-    
-    // Header
+    document.body.style.overflow = 'hidden';
+
+    renderModalHeader(player);
+    renderModalChart(player);
+    renderModalArsenal(player);
+}
+
+function renderModalHeader(player) {
     const header = document.getElementById('pm-header');
+    if (!header) return;
+
+    const delta = pointsDelta(player.history);
+
     header.innerHTML = `
-        <div class="player-avatar-large" style="width: 80px; height: 80px; font-size: 2rem; background: ${player.color}20; border-color: ${player.color}; box-shadow: 0 0 15px ${player.color}; margin-top: 0;">
-            <span style="color: ${player.color};">${player.firstName.substring(0, 1)}${player.lastName.substring(0, 1)}</span>
-        </div>
+        <div class="avatar">${initials(player.firstName, player.lastName)}</div>
         <div>
-            <h2 style="font-size: 1.8rem; margin: 0; color: #fff;">${player.firstName} ${player.lastName}</h2>
-            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">POINTS: <strong style="color: ${player.color};">${player.points}</strong> &nbsp;|&nbsp; RACKETS: <strong style="color: ${player.color};">${player.racketCount}</strong></div>
+            <h2 class="pm-name" id="pm-name-label">${esc(player.firstName)} ${esc(player.lastName)}</h2>
+            <div class="pm-chips">
+                <span class="chip">${MEDALS[player.position] || ''} ${ordinal(player.position)} de l'équipe</span>
+                <span class="chip">${formatNum(player.points)} pts</span>
+                <span class="chip">Rang ${player.nationalRank ? formatNum(player.nationalRank) : 'NC'}</span>
+                ${deltaChip(delta)}
+            </div>
         </div>
     `;
+}
 
-    // Chart.js Performance History
+function renderModalChart(player) {
     const canvas = document.getElementById('pm-chart');
-    if(!canvas) return;
+    if (!canvas || typeof Chart === 'undefined') return;
+
     const ctx = canvas.getContext('2d');
-    if (window.pmChartInstance) {
-        window.pmChartInstance.destroy();
-    }
+    if (chartInstance) chartInstance.destroy();
 
-    const historyDates = player.history.map(h => {
-        const d = new Date(h.date);
-        return d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
-    });
-    const historyPoints = player.history.map(h => h.points);
+    const css = getComputedStyle(document.documentElement);
+    const gridColor = css.getPropertyValue('--stroke').trim() || 'rgba(255,255,255,.09)';
+    const tickColor = css.getPropertyValue('--dim').trim() || '#626a7d';
 
-    window.pmChartInstance = new Chart(ctx, {
+    const labels = player.history.map(h =>
+        new Date(h.date).toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }));
+    const values = player.history.map(h => h.points);
+
+    // Dégradé vertical dans la couleur du joueur
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 240);
+    gradient.addColorStop(0, hexToRgba(player.color, 0.34));
+    gradient.addColorStop(1, hexToRgba(player.color, 0));
+
+    chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: historyDates,
+            labels,
             datasets: [{
                 label: 'Points',
-                data: historyPoints,
+                data: values,
                 borderColor: player.color,
-                backgroundColor: player.color + '20', /* transparent fill */
-                borderWidth: 3,
-                tension: 0.4, /* smooth curves */
+                backgroundColor: gradient,
+                borderWidth: 2.5,
+                tension: 0.38,
                 pointBackgroundColor: player.color,
-                pointBorderColor: '#111',
-                pointRadius: 5,
-                pointHoverRadius: 8,
+                pointBorderColor: 'transparent',
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHitRadius: 18,
                 fill: true
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(6,7,12,.94)',
+                    borderColor: player.color,
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    titleFont: { family: 'Outfit', size: 11, weight: '600' },
+                    bodyFont: { family: 'Outfit', size: 14, weight: '700' },
+                    callbacks: { label: (c) => `${c.parsed.y} points` }
+                }
             },
             scales: {
                 y: {
-                    grid: { color: 'rgba(255,255,255,0.05)' },
-                    ticks: { color: '#888' },
-                    beginAtZero: true
+                    beginAtZero: true,
+                    border: { display: false },
+                    grid: { color: gridColor, drawTicks: false },
+                    ticks: { color: tickColor, font: { family: 'Outfit', size: 11 }, padding: 10, maxTicksLimit: 5 }
                 },
                 x: {
+                    border: { display: false },
                     grid: { display: false },
-                    ticks: { color: '#888', maxRotation: 45, minRotation: 45 }
+                    ticks: {
+                        color: tickColor, font: { family: 'Outfit', size: 10 },
+                        maxRotation: 0, autoSkip: true, maxTicksLimit: 7
+                    }
                 }
             }
         }
     });
-
-    // Arsenal Horizontal scroll
-    const arsenalContainer = document.getElementById('pm-arsenal');
-    arsenalContainer.innerHTML = '';
-    
-    if (player.racketsList && player.racketsList.length > 0) {
-        player.racketsList.forEach(r => {
-            const rCard = document.createElement('div');
-            rCard.className = 'mini-racket-card';
-            rCard.style.setProperty('--glow-color', player.color);
-            rCard.innerHTML = `
-                <div class="mini-racket-img">
-                    <img src="${r.images[0]}" alt="${r.name}">
-                </div>
-                <div class="mini-racket-title">${r.name}</div>
-            `;
-            arsenalContainer.appendChild(rCard);
-        });
-    } else {
-        arsenalContainer.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Aucune raquette dans le garage.</p>';
-    }
 }
 
-window.closePlayerModal = function() {
+function renderModalArsenal(player) {
+    const host = document.getElementById('pm-arsenal');
+    if (!host) return;
+
+    if (!player.rackets.length) {
+        host.innerHTML = `<p style="color:var(--muted);font-size:.9rem;">Aucune raquette dans le garage.</p>`;
+        return;
+    }
+
+    host.innerHTML = player.rackets.map(r => `
+        <div class="mini-racket">
+            <div class="mini-racket-img">
+                <img src="${esc(r.images[0])}" alt="${esc(r.name)}" loading="lazy">
+            </div>
+            <div class="mini-racket-name">${esc(r.name)}</div>
+            <div class="mini-racket-price">${esc(r.price)}</div>
+            <span class="chip chip-level ${levelClass(r.level)}" style="justify-content:center">${esc(r.level)}</span>
+        </div>
+    `).join('');
+}
+
+export function closePlayerModal() {
     const modal = document.getElementById('player-modal');
+    if (!modal) return;
     modal.classList.remove('show');
-    setTimeout(() => {
-        if (!modal.classList.contains('show')) {
-            modal.style.display = 'none';
-        }
-    }, 400);
+    document.body.style.overflow = '';
+}
+
+/* Fermeture : bouton, clic sur le fond, touche Échap. */
+export function initPlayerModal() {
+    const modal = document.getElementById('player-modal');
+    const closeBtn = document.getElementById('pm-close');
+    if (!modal) return;
+
+    if (closeBtn) closeBtn.addEventListener('click', closePlayerModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closePlayerModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('show')) closePlayerModal();
+    });
+}
+
+/** #RRGGBB → rgba(r,g,b,a) pour les dégradés du canvas. */
+function hexToRgba(hex, alpha) {
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || '');
+    if (!m) return `rgba(34,225,255,${alpha})`;
+    return `rgba(${parseInt(m[1], 16)},${parseInt(m[2], 16)},${parseInt(m[3], 16)},${alpha})`;
 }

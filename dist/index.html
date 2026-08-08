@@ -3,230 +3,252 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Padel Team Garage ⚡</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Racket Garage — L'arsenal de l'équipe ⚡</title>
+    <meta name="description"
+        content="L'arsenal complet et le classement officiel de la Jules Marie League. 15 raquettes, 6 pilotes, toutes les données.">
 
-    <!-- Open Graph Meta Tags (Social Media Sharing) -->
-    <meta property="og:title" content="Padel Team Garage ⚡">
+    <!-- Open Graph (partage social) -->
+    <meta property="og:title" content="Racket Garage — L'arsenal de l'équipe ⚡">
     <meta property="og:description"
-        content="L'arsenal ultime et le classement officiel de la Jules Marie League. Comparez les équipements de l'équipe.">
-    <!-- Remplace l'URL de l'image par une vraie URL quand le site sera en ligne -->
-    <meta property="og:image" content="https://placehold.co/1200x630/050505/ffffff?text=PADEL+TEAM+GARAGE+|+ARSENAL+OFFICIEL">
+        content="15 raquettes, 6 pilotes, un seul garage. Découvre l'arsenal et le classement de la Jules Marie League.">
+    <meta property="og:image" content="https://placehold.co/1200x630/06070c/22e1ff?text=RACKET+GARAGE">
     <meta property="og:url" content="https://alexbeguepro.github.io/padel-team/">
     <meta property="og:type" content="website">
 
     <!-- PWA / Mobile Web App -->
     <link rel="manifest" href="/assets/manifest-opP1djlE.json">
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#06070c">
+    <meta name="color-scheme" content="dark light">
+    <link rel="icon" href="/assets/icon-DeL4Fb9A.png" type="image/png">
     <link rel="apple-touch-icon" href="/assets/icon-DeL4Fb9A.png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script type="module" crossorigin src="/assets/index--0QBXZNT.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-zmOUFp07.css">
+  <script type="module" crossorigin src="/assets/index-nyuf6AFf.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DCFjqe5v.css">
 </head>
 
 <body>
-    <!-- BACKGROUND ANIMATION (Neon Mesh Gradient) -->
-    <div class="bg-animation">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
+    <!-- Décor : orbes + grille + grain -->
+    <div class="bg-scene" aria-hidden="true">
+        <div class="orb orb-a"></div>
+        <div class="orb orb-b"></div>
+        <div class="orb orb-c"></div>
+        <div class="bg-grid"></div>
     </div>
+    <div class="grain" aria-hidden="true"></div>
 
-    <!-- SPLASH SCREEN -->
-    <div id="splash-screen" class="splash-screen">
-        <div class="splash-content">
-            <h1 class="splash-title">PADEL</h1>
-            <div class="splash-subtitle">TEAM GARAGE</div>
-            <div class="loader-line"></div>
-        </div>
-    </div>
+    <!-- Progression de lecture -->
+    <div class="scroll-progress" aria-hidden="true"><i id="scroll-bar"></i></div>
 
-    <header class="top-nav-bar">
-        <div class="brand">
-            <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="2" x2="12" y2="22"></line>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
+    <!-- Splash -->
+    <div id="splash-screen" class="splash">
+        <div class="splash-inner">
+            <svg class="splash-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9.5"></circle>
+                <line x1="12" y1="2.5" x2="12" y2="21.5"></line>
+                <line x1="2.5" y1="12" x2="21.5" y2="12"></line>
             </svg>
-            <div class="brand-text">
-                <div class="brand-title">RACKET</div>
-                <div class="brand-subtitle">GARAGE</div>
-            </div>
+            <div class="splash-word">RACKET <span>GARAGE</span></div>
+            <div class="splash-bar"><i></i></div>
         </div>
+    </div>
 
-        <nav class="main-nav">
-            <button class="nav-btn active" onclick="switchView('showroom')" id="nav-showroom">
-                <span class="nav-text">Showroom <span class="nav-active-text">[Active]</span></span>
-                <span class="nav-line"></span>
-            </button>
-            <button class="nav-btn" onclick="switchView('ranking')" id="nav-ranking">
-                <span class="nav-text">Classement <span class="nav-active-text">[Active]</span></span>
-                <span class="nav-line"></span>
-            </button>
-            <button class="nav-btn" onclick="switchView('profile')" id="nav-profile">
-                <span class="nav-text">Profile <span class="nav-active-text">[Active]</span></span>
-                <span class="nav-line"></span>
-            </button>
+    <!-- En-tête -->
+    <header class="topbar" id="topbar">
+        <a class="brand" href="#" aria-label="Racket Garage — accueil">
+            <span class="brand-mark">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9.5"></circle>
+                    <line x1="12" y1="2.5" x2="12" y2="21.5"></line>
+                    <line x1="2.5" y1="12" x2="21.5" y2="12"></line>
+                </svg>
+            </span>
+            <span class="brand-text">
+                <span class="brand-title">Racket</span>
+                <span class="brand-subtitle">Garage</span>
+            </span>
+        </a>
+
+        <nav class="main-nav" aria-label="Navigation principale">
+            <button class="nav-btn active" id="nav-showroom" data-view="showroom">Showroom</button>
+            <button class="nav-btn" id="nav-ranking" data-view="ranking">Classement</button>
+            <button class="nav-btn" id="nav-profile" data-view="profile">Pilotes</button>
         </nav>
 
         <div class="header-right">
-            <!-- Theme Toggle -->
             <button id="theme-toggle" class="icon-btn" aria-label="Changer le thème">
-                 <svg id="theme-icon-light" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg><svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+                <svg id="theme-icon-light" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg id="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
             </button>
 
-            
-            <button id="install-btn" class="icon-btn" style="display: none;" aria-label="Installer l'appli">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <button id="install-btn" class="icon-btn" style="display: none;" aria-label="Installer l'application">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
             </button>
         </div>
     </header>
 
     <main class="container">
 
-        <!-- VUE SHOWROOM (CINEMATIC) -->
+        <!-- ================= SHOWROOM ================= -->
         <section id="showroom-view" class="view-section active">
-            <div class="sr-bg-brand-watermark" id="sr-watermark">PADEL</div>
-            <div class="sr-feed-container" id="sr-feed">
-                <!-- Injected by JS -->
+            <header class="hero">
+                <div class="hero-ghost" aria-hidden="true">PADEL</div>
+
+                <span class="hero-eyebrow"><i class="pulse-dot"></i> Saison 2026 · Jules Marie League</span>
+
+                <h1 class="hero-title">
+                    <span class="l1">L'arsenal</span>
+                    <span class="l2">de l'équipe</span>
+                </h1>
+
+                <p class="hero-sub">
+                    Chaque raquette du garage, disséquée : poids, forme, mousse, surface et télémétrie complète.
+                    Trouve celle qui te ressemble.
+                </p>
+
+                <div class="hero-stats" id="hero-stats"></div>
+
+                <div class="hero-cue" aria-hidden="true">
+                    <span>Explorer</span>
+                    <i></i>
+                </div>
+            </header>
+
+            <div class="sr-toolbar">
+                <div class="sr-filters" id="sr-filters" role="group" aria-label="Filtrer par pilote"></div>
+                <div class="sr-count" id="sr-count"></div>
             </div>
+
+            <div class="sr-grid" id="sr-feed"></div>
         </section>
 
-        <!-- VUE CLASSEMENT -->
+        <!-- ================= CLASSEMENT ================= -->
         <section id="ranking-view" class="view-section" style="display:none;">
-            <div class="ranking-container">
-                <!-- Fun Facts Dashboard -->
-                <div class="dashboard-stats" id="fun-facts-dash">
-                    <!-- Stats injected here via JS -->
-                </div>
-
-                <div class="ranking-header">
-                    <div class="rank-col">Pos</div>
-                    <div class="player-col">Pilote</div>
-                    <div class="points-col">Pts</div>
-                </div>
-                <div id="ranking-list" class="ranking-list">
-                    <!-- Ranking items will be injected here -->
+            <div class="section-head">
+                <div>
+                    <span class="section-eyebrow"><i class="pulse-dot"></i> Classement national</span>
+                    <h2 class="section-title">Le tableau de bord</h2>
+                    <p class="section-sub">Points et rang national de chaque pilote, avec l'évolution depuis le dernier
+                        relevé.</p>
                 </div>
             </div>
+
+            <div class="stat-tiles" id="fun-facts-dash"></div>
+
+            <div class="podium" id="podium"></div>
+
+            <div class="rk-list-head">
+                <div>Pos</div>
+                <div></div>
+                <div>Pilote</div>
+                <div>Tendance</div>
+                <div class="ta-r">Évol.</div>
+                <div class="ta-r">Points</div>
+            </div>
+            <div class="rk-list" id="ranking-list"></div>
         </section>
 
-        <!-- VUE PROFILE / JOUEURS -->
+        <!-- ================= PILOTES ================= -->
         <section id="profile-view" class="view-section" style="display:none;">
-            <div class="racket-grid" id="profile-container">
-                <!-- Player cards rendered here -->
+            <div class="section-head">
+                <div>
+                    <span class="section-eyebrow"><i class="pulse-dot"></i> L'équipe</span>
+                    <h2 class="section-title">Les pilotes</h2>
+                    <p class="section-sub">Six joueurs, une seule ligue. Clique sur une carte pour voir la progression
+                        détaillée et l'arsenal complet.</p>
+                </div>
             </div>
+
+            <div class="player-grid" id="profile-container"></div>
         </section>
     </main>
 
-    <!-- MODALE SIDE-PANEL -->
-    <div class="side-panel-overlay" id="modal">
-        <div class="side-panel">
-            <button class="close-btn" onclick="closeModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Barre d'onglets (mobile) -->
+    <nav class="tabbar" aria-label="Navigation mobile">
+        <button class="tab-btn active" data-view="showroom">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="2"></rect>
+            </svg>
+            Showroom
+        </button>
+        <button class="tab-btn" data-view="ranking">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 9a6 6 0 0 0 12 0V3H6z"></path>
+                <path d="M6 5H3v2a3 3 0 0 0 3 3"></path>
+                <path d="M18 5h3v2a3 3 0 0 1-3 3"></path>
+                <line x1="12" y1="15" x2="12" y2="19"></line>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+            </svg>
+            Classement
+        </button>
+        <button class="tab-btn" data-view="profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            </svg>
+            Pilotes
+        </button>
+    </nav>
+
+    <!-- Modale profil joueur -->
+    <div class="modal-overlay" id="player-modal" role="dialog" aria-modal="true" aria-labelledby="pm-name-label">
+        <div class="modal-panel" id="player-modal-content">
+            <button class="close-btn" id="pm-close" aria-label="Fermer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </button>
 
-            <div class="panel-layout">
-                <!-- Zone Image (Gauche) -->
-                <div class="panel-visual">
-                    <div class="main-img-wrap">
-                        <img id="m-img" class="modal-img" src="" alt="Raquette">
-                    </div>
-                    <!-- Zone d'affichage des miniatures additionnelles -->
-                    <div class="thumbs-container" id="m-thumbs"></div>
-                </div>
+            <div class="pm-header" id="pm-header"></div>
 
-                <!-- Zone Data (Droite) -->
-                <div class="panel-data">
-                    <div class="data-header">
-                        <span id="m-tag" class="modal-tag">Niveau</span>
-                        <h2 id="m-title">Titre Raquette</h2>
-                        <div class="price-wrap">
-                            <span id="m-price">0 €</span>
-                        </div>
-                    </div>
+            <div class="pm-block">
+                <h3 class="pm-block-title">Progression — points</h3>
+                <div class="pm-chart-wrap"><canvas id="pm-chart"></canvas></div>
+            </div>
 
-                    <div class="data-content">
-                        <p id="m-desc" class="desc-text"></p>
-
-                        <div class="specs-grid">
-                            <div class="spec-item">
-                                <span class="spec-label"
-                                    data-tooltip="Influence la force de frappe et la maniabilité.">Poids</span>
-                                <span class="spec-value" id="m-weight">-</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label"
-                                    data-tooltip="Ronde (Contrôle), Diamant (Puissance), Goutte (Polyvalente)">Forme</span>
-                                <span class="spec-value" id="m-shape">-</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label"
-                                    data-tooltip="Soft (Confort & Tolérance), Hard (Puissance & Précision)">Mousse</span>
-                                <span class="spec-value" id="m-foam">-</span>
-                            </div>
-                            <div class="spec-item">
-                                <span class="spec-label"
-                                    data-tooltip="Fibre de verre (Souple), Carbone (Rigide & Sec)">Surface</span>
-                                <span class="spec-value" id="m-surface">-</span>
-                            </div>
-                        </div>
-
-                        <div class="performance-section">
-                            <h3>Télémétrie</h3>
-                            <div class="stats-list" id="m-stats">
-                                <!-- Stats injected here -->
-                            </div>
-                        </div>
-
-                        <div class="action-section">
-                            <a id="m-link" href="#" target="_blank" class="buy-btn">
-                                Accepter l'offre
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <div class="pm-block">
+                <h3 class="pm-block-title">Arsenal</h3>
+                <div class="pm-arsenal" id="pm-arsenal"></div>
             </div>
         </div>
     </div>
 
-    
-    <!-- MODALE PROFIL JOUEUR -->
-    <div class="side-panel-overlay" id="player-modal" style="display: none;">
-        <div class="player-modal-content" id="player-modal-content">
-            <button class="close-btn" onclick="closePlayerModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-            
-            <div class="player-modal-header" id="pm-header"></div>
-
-            <div class="player-modal-chart-wrap">
-                <h3 class="chart-title" style="margin-bottom: 20px;">PERFORMANCE HISTORY (POINTS)</h3>
-                <canvas id="pm-chart"></canvas>
-            </div>
-
-            <div class="player-modal-arsenal-wrap">
-                <h3 class="chart-title">PLAYER ARSENAL</h3>
-                <div class="arsenal-scroll" id="pm-arsenal"></div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>

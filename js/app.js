@@ -1,169 +1,143 @@
 /**
  * app.js
- * Chef d'orchestre : Importe les données via l'API et initialise les autres modules UI.
+ * Chef d'orchestre : charge les données, initialise les vues et la navigation.
  */
 
-import { loadData } from './api.js';
+import { loadData, mergePlayers } from './api.js';
 import { initUI } from './ui.js';
 import { renderRanking } from './ranking.js';
-import { initProfile } from './profile.js';
+import { initProfile, initPlayerModal } from './profile.js';
 import { initShowroom } from './showroom.js';
 
-let deferredPrompt;
+const VIEWS = ['showroom', 'ranking', 'profile'];
+
+let deferredPrompt = null;
 let currentView = 'showroom';
 
 async function bootstrap() {
-    // 1. Init UI transversale (Thème, Splash Screen...)
     initUI();
+    initPlayerModal();
 
-    // 2. Load Data
     const { profilesData, rankingData } = await loadData();
+    const players = mergePlayers(rankingData, profilesData);
 
-    // 3. Init Vues
-    renderRanking(rankingData, profilesData);
-    initProfile(rankingData, profilesData);
-    initShowroom(profilesData);
+    initShowroom(profilesData, rankingData);
+    renderRanking(players);
+    initProfile(players);
 
-    // 4. Setup Global Navigation
     setupNavigation();
+    setupPWAInstall();
 
-    // 5. Setup Service Worker (PWA)
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('✅ Service Worker Registered', reg))
-                .catch(err => console.error('❌ Service Worker Registration failed', err));
+                .then(reg => console.log('✅ Service Worker enregistré', reg))
+                .catch(err => console.error('❌ Échec du Service Worker', err));
         });
     }
-
-    setupPWAInstall();
 }
 
+/* ------------------------------------------------------------ NAVIGATION */
+function setupNavigation() {
+    document.querySelectorAll('.nav-btn, .tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (navigator.vibrate) navigator.vibrate(10);
+            switchView(btn.dataset.view);
+        });
+    });
+
+    setupSwipe();
+}
+
+function switchView(viewName) {
+    if (!VIEWS.includes(viewName) || viewName === currentView) return;
+    currentView = viewName;
+
+    document.querySelectorAll('.view-section').forEach(el => {
+        el.style.display = 'none';
+        el.classList.remove('active');
+    });
+
+    const target = document.getElementById(`${viewName}-view`);
+    target.style.display = 'block';
+    void target.offsetWidth; // reflow pour rejouer l'animation d'entrée
+    target.classList.add('active');
+
+    document.querySelectorAll('.nav-btn, .tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === viewName);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (viewName === 'ranking' && typeof confetti !== 'undefined'
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        confetti({
+            particleCount: 70,
+            spread: 62,
+            startVelocity: 34,
+            origin: { y: 0.12, x: 0.5 },
+            colors: ['#ffd166', '#22e1ff', '#ff3ded', '#ffffff']
+        });
+    }
+}
+
+/** Navigation par balayage horizontal (mobile). */
+function setupSwipe() {
+    let startX = 0;
+    let startY = 0;
+
+    document.addEventListener('touchstart', e => {
+        startX = e.changedTouches[0].screenX;
+        startY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].screenX - startX;
+        const dy = e.changedTouches[0].screenY - startY;
+
+        // On ignore les gestes principalement verticaux (défilement).
+        if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+        const index = VIEWS.indexOf(currentView);
+        const next = dx < 0
+            ? VIEWS[(index + 1) % VIEWS.length]
+            : VIEWS[(index - 1 + VIEWS.length) % VIEWS.length];
+
+        if (navigator.vibrate) navigator.vibrate(15);
+        switchView(next);
+    }, { passive: true });
+}
+
+/* ---------------------------------------------------------- INSTALL PWA */
 function setupPWAInstall() {
     const installBtn = document.getElementById('install-btn');
     if (!installBtn) return;
 
-    // Check if already in standalone mode (already installed)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    
-    // Always display the button on mobile browsers to handle iOS gracefully
-    // (except if it's already installed)
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isStandalone && isMobile) {
-        installBtn.style.display = 'block';
-    }
+
+    if (!isStandalone && isMobile) installBtn.style.display = 'grid';
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'block'; // S'assure que c'est affiché même sur Desktop
+        installBtn.style.display = 'grid';
     });
 
     installBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
-            // Installation native Android/Chrome
             installBtn.style.display = 'none';
             deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('User accepted the PWA prompt');
-            }
+            await deferredPrompt.userChoice;
             deferredPrompt = null;
         } else {
-            // Fallback pour iOS (Safari) et Android (via HTTP local en test)
-            alert("🍏 Sur iPhone/iPad : Appuyez sur l'icône 'Partager' au centre en bas, puis choisissez 'Sur l'écran d'accueil'.\n\n🤖 Sur Android (si ça ne marche pas) : Appuyez sur les 3 points du navigateur en haut à droite, puis sur 'Ajouter à l'écran d'accueil'.");
+            alert("🍏 Sur iPhone/iPad : appuie sur l'icône « Partager » en bas, puis « Sur l'écran d'accueil ».\n\n🤖 Sur Android : menu ⋮ du navigateur, puis « Ajouter à l'écran d'accueil ».");
         }
     });
 
     window.addEventListener('appinstalled', () => {
-        console.log('PWA was installed');
         installBtn.style.display = 'none';
     });
-}
-
-function setupNavigation() {
-    const navShowroom = document.getElementById('nav-showroom');
-    const navRanking = document.getElementById('nav-ranking');
-
-    if (navShowroom) navShowroom.addEventListener('click', () => {
-        if(navigator.vibrate) navigator.vibrate(10);
-        switchView('showroom');
-    });
-    if (navRanking) navRanking.addEventListener('click', () => {
-        if(navigator.vibrate) navigator.vibrate(10);
-        switchView('ranking');
-    });
-
-    // Touch Swipe Navigation
-    let touchstartX = 0;
-    let touchendX = 0;
-    
-    function checkDirection() {
-        if (touchendX < touchstartX - 70) {
-            // Swipe Left (Next View)
-            if (currentView === 'showroom') {
-                if (navigator.vibrate) navigator.vibrate(15);
-                switchView('ranking');
-            } else if (currentView === 'ranking') {
-                if (navigator.vibrate) navigator.vibrate(15);
-                switchView('profile');
-            } else if (currentView === 'profile') {
-                if (navigator.vibrate) navigator.vibrate(15);
-                switchView('showroom');
-            }
-        }
-        if (touchendX > touchstartX + 70) {
-            // Swipe Right (Prev View)
-            if (currentView === 'profile') {
-                if (navigator.vibrate) navigator.vibrate(15);
-                switchView('ranking');
-            } else if (currentView === 'ranking') {
-                if (navigator.vibrate) navigator.vibrate(15);
-                switchView('showroom');
-            } else if (currentView === 'showroom') {
-                if (navigator.vibrate) navigator.vibrate(15);
-                switchView('profile');
-            }
-        }
-    }
-    
-    document.addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-    });
-    
-    document.addEventListener('touchend', e => {
-        touchendX = e.changedTouches[0].screenX;
-        checkDirection();
-    });
-}
-
-function switchView(viewName) {
-    if(currentView === viewName && !document.getElementById(viewName + '-view').style.display) {
-        // Initial setup edgecase
-    } else if(currentView === viewName) {
-        return;
-    } else {
-       currentView = viewName;
-    }
-    document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-    const target = document.getElementById(viewName + '-view');
-    target.style.display = 'block';
-    target.classList.remove('active');
-    void target.offsetWidth; // Trigger reflow
-    target.classList.add('active');
-
-    document.getElementById('nav-' + viewName).classList.add('active');
-
-    if (viewName === 'ranking' && typeof confetti !== 'undefined') {
-        confetti({
-            particleCount: 80,
-            spread: 60,
-            origin: { y: 0.1, x: 0.5 },
-            colors: ['#D4AF37', '#FFDF00', '#FFFFFF']
-        });
-    }
 }
 
 if (document.readyState === 'loading') {
