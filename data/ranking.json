@@ -3,7 +3,7 @@
         "name": "Matthias",
         "firstName": "Matthias",
         "lastName": "Bossard",
-        "nationalRank": 44101,
+        "nationalRank": 44360,
         "points": 88,
         "history": [
             {
@@ -100,6 +100,11 @@
                 "date": "2026-08-09",
                 "rank": 44101,
                 "points": 88
+            },
+            {
+                "date": "2026-08-14",
+                "rank": 44360,
+                "points": 88
             }
         ]
     },
@@ -107,7 +112,7 @@
         "name": "Tapin",
         "firstName": "Mathys",
         "lastName": "Tapin",
-        "nationalRank": 54428,
+        "nationalRank": 54720,
         "points": 56,
         "history": [
             {
@@ -199,6 +204,11 @@
                 "date": "2026-08-09",
                 "rank": 54428,
                 "points": 56
+            },
+            {
+                "date": "2026-08-14",
+                "rank": 54720,
+                "points": 56
             }
         ]
     },
@@ -206,7 +216,7 @@
         "name": "Alex",
         "firstName": "Alex",
         "lastName": "Begue",
-        "nationalRank": 25848,
+        "nationalRank": 26009,
         "points": 221,
         "history": [
             {
@@ -307,6 +317,11 @@
             {
                 "date": "2026-08-09",
                 "rank": 25848,
+                "points": 221
+            },
+            {
+                "date": "2026-08-14",
+                "rank": 26009,
                 "points": 221
             }
         ]
@@ -424,7 +439,7 @@
         "name": "Elouan",
         "firstName": "Elouan",
         "lastName": "Boisseau",
-        "nationalRank": 81223,
+        "nationalRank": 81521,
         "points": 19,
         "history": [
             {
@@ -526,6 +541,11 @@
                 "date": "2026-08-09",
                 "rank": 81223,
                 "points": 19
+            },
+            {
+                "date": "2026-08-14",
+                "rank": 81521,
+                "points": 19
             }
         ]
     },
@@ -533,7 +553,7 @@
         "name": "Mateo",
         "firstName": "Mateo",
         "lastName": "Albert",
-        "nationalRank": 89966,
+        "nationalRank": 90295,
         "points": 13,
         "history": [
             {
@@ -624,6 +644,11 @@
             {
                 "date": "2026-08-09",
                 "rank": 89966,
+                "points": 13
+            },
+            {
+                "date": "2026-08-14",
+                "rank": 90295,
                 "points": 13
             }
         ]
