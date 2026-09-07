@@ -3,8 +3,8 @@
         "name": "Matthias",
         "firstName": "Matthias",
         "lastName": "Bossard",
-        "nationalRank": 44360,
-        "points": 88,
+        "nationalRank": 46252,
+        "points": 96,
         "history": [
             {
                 "date": "2025-10-01",
@@ -105,6 +105,16 @@
                 "date": "2026-08-14",
                 "rank": 44360,
                 "points": 88
+            },
+            {
+                "date": "2026-09-02",
+                "rank": 46252,
+                "points": 96
+            },
+            {
+                "date": "2026-09-07",
+                "rank": 46252,
+                "points": 96
             }
         ]
     },
@@ -112,8 +122,8 @@
         "name": "Tapin",
         "firstName": "Mathys",
         "lastName": "Tapin",
-        "nationalRank": 54720,
-        "points": 56,
+        "nationalRank": 56243,
+        "points": 62,
         "history": [
             {
                 "date": "2025-10-01",
@@ -209,6 +219,16 @@
                 "date": "2026-08-14",
                 "rank": 54720,
                 "points": 56
+            },
+            {
+                "date": "2026-09-02",
+                "rank": 56243,
+                "points": 62
+            },
+            {
+                "date": "2026-09-07",
+                "rank": 56243,
+                "points": 62
             }
         ]
     },
@@ -216,8 +236,8 @@
         "name": "Alex",
         "firstName": "Alex",
         "lastName": "Begue",
-        "nationalRank": 26009,
-        "points": 221,
+        "nationalRank": 26348,
+        "points": 266,
         "history": [
             {
                 "date": "2025-10-01",
@@ -323,6 +343,16 @@
                 "date": "2026-08-14",
                 "rank": 26009,
                 "points": 221
+            },
+            {
+                "date": "2026-09-02",
+                "rank": 26348,
+                "points": 266
+            },
+            {
+                "date": "2026-09-07",
+                "rank": 26348,
+                "points": 266
             }
         ]
     },
@@ -330,8 +360,8 @@
         "name": "Erwan",
         "firstName": "Erwan",
         "lastName": "Hillion",
-        "nationalRank": 31549,
-        "points": 162,
+        "nationalRank": 28007,
+        "points": 239,
         "history": [
             {
                 "date": "2025-10-01",
@@ -432,6 +462,16 @@
                 "date": "2026-08-09",
                 "rank": 31549,
                 "points": 162
+            },
+            {
+                "date": "2026-09-02",
+                "rank": 28007,
+                "points": 239
+            },
+            {
+                "date": "2026-09-07",
+                "rank": 28007,
+                "points": 239
             }
         ]
     },
@@ -439,8 +479,8 @@
         "name": "Elouan",
         "firstName": "Elouan",
         "lastName": "Boisseau",
-        "nationalRank": 81521,
-        "points": 19,
+        "nationalRank": 71550,
+        "points": 33,
         "history": [
             {
                 "date": "2025-10-01",
@@ -546,6 +586,16 @@
                 "date": "2026-08-14",
                 "rank": 81521,
                 "points": 19
+            },
+            {
+                "date": "2026-09-02",
+                "rank": 71550,
+                "points": 33
+            },
+            {
+                "date": "2026-09-07",
+                "rank": 71550,
+                "points": 33
             }
         ]
     },
@@ -553,7 +603,7 @@
         "name": "Mateo",
         "firstName": "Mateo",
         "lastName": "Albert",
-        "nationalRank": 90295,
+        "nationalRank": 94220,
         "points": 13,
         "history": [
             {
@@ -649,6 +699,16 @@
             {
                 "date": "2026-08-14",
                 "rank": 90295,
+                "points": 13
+            },
+            {
+                "date": "2026-09-02",
+                "rank": 94220,
+                "points": 13
+            },
+            {
+                "date": "2026-09-07",
+                "rank": 94220,
                 "points": 13
             }
         ]
