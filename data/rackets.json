@@ -79,6 +79,31 @@
                     "Effet": 9,
                     "Tolérance": 8
                 }
+            },
+            {
+                "name": "Nox AT10 Genius 12K Alum Xtrem 2026",
+                "level": "Expert",
+                "images": [
+                    "img/alex/nox-12k-face.png",
+                    "img/alex/nox-12k-cote.png"
+                ],
+                "url": "https://www.padelreference.com/fr/raquettes-de-padel/p/nox-AT10-genius-12K-alum-xtrem-2026",
+                "price": "234,90 €",
+                "specs": {
+                    "weight": "360-375g",
+                    "shape": "Goutte d'eau",
+                    "foam": "HR3 Black EVA",
+                    "surface": "Carbone 12K Alum Xtrem"
+                },
+                "description": "La raquette d'Agustín Tapia en version 12K. Plus rigide que la 18K, son carbone aluminisé offre un toucher sec et une puissance explosive, avec un équilibre réglable grâce au Weight Balance.",
+                "stats": {
+                    "Puissance": 9,
+                    "Contrôle": 10,
+                    "Confort": 7,
+                    "Maniabilité": 8,
+                    "Effet": 9,
+                    "Tolérance": 8
+                }
             }
         ]
     },
