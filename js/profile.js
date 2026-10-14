@@ -130,6 +130,19 @@ function renderModalChart(player) {
 
     const ctx = canvas.getContext('2d');
     if (chartInstance) chartInstance.destroy();
+    chartInstance = null;
+
+    // Joueur pas encore classé : un message plutôt qu'une courbe vide.
+    const wrap = canvas.parentElement;
+    wrap.querySelector('.pm-chart-empty')?.remove();
+    const empty = !player.history.length;
+    canvas.style.display = empty ? 'none' : '';
+    wrap.style.height = empty ? 'auto' : '';
+    if (empty) {
+        wrap.insertAdjacentHTML('beforeend',
+            `<p class="pm-chart-empty" style="color:var(--muted);font-size:.9rem;margin:0;">Pas encore classé : la courbe apparaîtra après son premier relevé.</p>`);
+        return;
+    }
 
     const css = getComputedStyle(document.documentElement);
     const gridColor = css.getPropertyValue('--stroke').trim() || 'rgba(255,255,255,.09)';

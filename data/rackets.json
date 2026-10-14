@@ -45,7 +45,7 @@
                     "foam": "Power Foam",
                     "surface": "Innegra"
                 },
-                "description": "Raquette polyvalente pour progresser.",
+                "description": "Raquette polyvalente pour progresser, aujourd'hui entre les mains de Loris.",
                 "stats": {
                     "Puissance": 7,
                     "Contrôle": 6,
@@ -70,7 +70,7 @@
                     "foam": "X-EVA",
                     "surface": "Carbone 3K"
                 },
-                "description": "Ma raquette actuelle, une arme de précision.",
+                "description": "Mon ancienne arme de précision, revendue à Eliott.",
                 "stats": {
                     "Puissance": 8,
                     "Contrôle": 10,
@@ -95,7 +95,7 @@
                     "foam": "HR3 Black EVA",
                     "surface": "Carbone 12K Alum Xtrem"
                 },
-                "description": "La raquette d'Agustín Tapia en version 12K. Plus rigide que la 18K, son carbone aluminisé offre un toucher sec et une puissance explosive, avec un équilibre réglable grâce au Weight Balance.",
+                "description": "Ma raquette actuelle, la raquette d'Agustín Tapia en version 12K. Plus rigide que la 18K, son carbone aluminisé offre un toucher sec et une puissance explosive, avec un équilibre réglable grâce au Weight Balance.",
                 "stats": {
                     "Puissance": 9,
                     "Contrôle": 10,
@@ -434,6 +434,94 @@
                     "Maniabilité": 10,
                     "Effet": 9,
                     "Tolérance": 7
+                }
+            }
+        ]
+    },
+    {
+        "name": "Eliott",
+        "color": "#ffa502",
+        "rackets": [
+            {
+                "name": "Tuyo Cosmic Blue",
+                "level": "Intermédiaire",
+                "images": [
+                    "img/eliott/tuyo-cosmic-blue_face.png",
+                    "img/eliott/tuyo-cosmic-blue_cote.png"
+                ],
+                "url": "https://www.ibood.com/fr/s-fr/o/tuyo-padelschlager-cosmic-blue/2790979",
+                "price": "139,95 €",
+                "specs": {
+                    "weight": "350-370g",
+                    "shape": "Goutte d'eau",
+                    "foam": "EVA Black",
+                    "surface": "Carbone 12K"
+                },
+                "description": "Une raquette polyvalente full carbone. Sa forme goutte d'eau et son équilibre légèrement en tête offrent un bon compromis puissance/contrôle, idéale pour les joueurs venus du tennis ou du squash.",
+                "stats": {
+                    "Puissance": 7,
+                    "Contrôle": 7,
+                    "Confort": 6,
+                    "Maniabilité": 7,
+                    "Effet": 6,
+                    "Tolérance": 6
+                }
+            },
+            {
+                "name": "Babolat Counter Viper 2025",
+                "level": "Expert",
+                "images": [
+                    "img/eliott/babolat-counter-viper_face.png",
+                    "img/eliott/babolat-counter-viper_cote.png"
+                ],
+                "url": "https://www.padelreference.com",
+                "price": "249,90 €",
+                "specs": {
+                    "weight": "365g",
+                    "shape": "Hybride",
+                    "foam": "X-EVA",
+                    "surface": "Carbone 3K"
+                },
+                "description": "Rachetée à Alex. Une arme de précision pour passer un cap.",
+                "stats": {
+                    "Puissance": 8,
+                    "Contrôle": 10,
+                    "Confort": 7,
+                    "Maniabilité": 9,
+                    "Effet": 9,
+                    "Tolérance": 8
+                }
+            }
+        ]
+    },
+    {
+        "name": "Loris",
+        "color": "#fd79a8",
+        "rackets": [
+            {
+                "name": "Head Concord",
+                "level": "Intermédiaire",
+                "images": [
+                    "img/loris/head-concord_face.png",
+                    "img/loris/head-concord_cote.png",
+                    "img/loris/head-concord_poser.png"
+                ],
+                "url": "https://www.intersport.fr",
+                "price": "68,90 €",
+                "specs": {
+                    "weight": "365g",
+                    "shape": "Goutte d'eau",
+                    "foam": "Power Foam",
+                    "surface": "Innegra"
+                },
+                "description": "L'ancienne raquette d'Alex. Polyvalente et tolérante, parfaite pour progresser.",
+                "stats": {
+                    "Puissance": 7,
+                    "Contrôle": 6,
+                    "Confort": 7,
+                    "Maniabilité": 7,
+                    "Effet": 5,
+                    "Tolérance": 8
                 }
             }
         ]

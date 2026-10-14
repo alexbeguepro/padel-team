@@ -45,8 +45,6 @@ function setupNavigation() {
             switchView(btn.dataset.view);
         });
     });
-
-    setupSwipe();
 }
 
 function switchView(viewName) {
@@ -79,33 +77,6 @@ function switchView(viewName) {
             colors: ['#ffd166', '#22e1ff', '#ff3ded', '#ffffff']
         });
     }
-}
-
-/** Navigation par balayage horizontal (mobile). */
-function setupSwipe() {
-    let startX = 0;
-    let startY = 0;
-
-    document.addEventListener('touchstart', e => {
-        startX = e.changedTouches[0].screenX;
-        startY = e.changedTouches[0].screenY;
-    }, { passive: true });
-
-    document.addEventListener('touchend', e => {
-        const dx = e.changedTouches[0].screenX - startX;
-        const dy = e.changedTouches[0].screenY - startY;
-
-        // On ignore les gestes principalement verticaux (défilement).
-        if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-
-        const index = VIEWS.indexOf(currentView);
-        const next = dx < 0
-            ? VIEWS[(index + 1) % VIEWS.length]
-            : VIEWS[(index - 1 + VIEWS.length) % VIEWS.length];
-
-        if (navigator.vibrate) navigator.vibrate(15);
-        switchView(next);
-    }, { passive: true });
 }
 
 /* ---------------------------------------------------------- INSTALL PWA */

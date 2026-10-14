@@ -742,5 +742,21 @@
                 "points": 19
             }
         ]
+    },
+    {
+        "name": "Eliott",
+        "firstName": "Eliott",
+        "lastName": "",
+        "nationalRank": null,
+        "points": 0,
+        "history": []
+    },
+    {
+        "name": "Loris",
+        "firstName": "Loris",
+        "lastName": "",
+        "nationalRank": null,
+        "points": 0,
+        "history": []
     }
 ]
