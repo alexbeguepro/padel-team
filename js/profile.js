@@ -26,7 +26,7 @@ export function initProfile(players) {
         const series = player.history.slice(-14).map(h => h.points);
         const medal = MEDALS[player.position] || '';
 
-        const thumbs = player.rackets.slice(0, 3).map(r => `
+        const thumbs = player.rackets.map(r => `
             <div class="player-thumb"><img src="${esc(r.images[0])}" alt="${esc(r.name)}" loading="lazy"></div>
         `).join('');
 
