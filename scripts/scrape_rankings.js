@@ -3,8 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
-const TARGET_URL = 'https://tenup.fft.fr/classement-padel?categorie=H';
+const TARGET_URL = 'https://tenup.fft.fr/classement-joueurs/padel?categorie=H';
 const DATA_FILE_PATH = path.join(__dirname, '../data/ranking.json');
+
+// "Mathéo  ALBERT" -> "matheo albert"
+const normalizeName = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
 
 async function scrapeRankings() {
     console.log('🎾 Starting Padel Ranking Scraper...');
@@ -26,6 +29,7 @@ async function scrapeRankings() {
     }
 
     console.log(`🔍 Found ${playersToScrape.length} players to scrape.`);
+    const notUpdated = [];
 
     const browser = await puppeteer.launch({
         headless: "new",
@@ -66,104 +70,65 @@ async function scrapeRankings() {
 
         for (const player of playersToScrape) {
             console.log(`\nProcessing ${player.firstName} ${player.lastName}...`);
+            const fullName = normalizeName(`${player.firstName} ${player.lastName}`);
 
             try {
                 // Force Reload to clear state
                 await page.goto(TARGET_URL, { waitUntil: 'networkidle2' });
-                await page.waitForSelector('input', { timeout: 10000 });
 
-                const visibleInputs = await page.evaluateHandle(() => {
-                    return Array.from(document.querySelectorAll('input'))
-                        .filter(i => {
-                            const style = window.getComputedStyle(i);
-                            return style.display !== 'none' && style.visibility !== 'hidden' && i.type === 'text';
-                        });
-                });
-
-                const inputHandles = [];
-                const properties = await visibleInputs.getProperties();
-                for (const prop of properties.values()) {
-                    inputHandles.push(prop);
-                }
-
-                if (inputHandles.length < 2) {
-                    console.log(`⚠️ Expected at least 2 text inputs, found ${inputHandles.length}.`);
-                    continue;
-                }
-
-                // Correct Mapping: Input 0 = First Name, Input 1 = Last Name
-                let firstNameInput = inputHandles[0];
-                let lastNameInput = inputHandles[1];
-
-                // Clear and type
-                await firstNameInput.click({ clickCount: 3 });
-                await firstNameInput.type(player.firstName);
-
-                await lastNameInput.click({ clickCount: 3 });
-                await lastNameInput.type(player.lastName);
-
-                // Click Search button CORRECTLY (Last one)
-                const searchBtnFound = await page.evaluate(() => {
-                    const buttons = Array.from(document.querySelectorAll('button, input[type="submit"], div[role="button"], a.btn'));
-                    const searchBtns = buttons.filter(b => {
-                        const text = (b.innerText || b.textContent || "").toLowerCase();
-                        return text.includes('rechercher');
-                    });
-
-                    if (searchBtns.length > 0) {
-                        searchBtns[searchBtns.length - 1].click();
-                        return true;
-                    }
+                // The search form lives in a dialog opened by "RECHERCHER UN JOUEUR"
+                const dialogOpened = await page.evaluate(() => {
+                    const btn = Array.from(document.querySelectorAll('button'))
+                        .find(b => (b.innerText || '').trim().toUpperCase() === 'RECHERCHER UN JOUEUR');
+                    if (btn) { btn.click(); return true; }
                     return false;
                 });
-
-                if (!searchBtnFound) {
-                    console.error("Search button 'Rechercher' not found");
+                if (!dialogOpened) {
+                    console.error("Button 'Rechercher un joueur' not found");
+                    notUpdated.push(`${player.firstName} ${player.lastName}`);
                     continue;
                 }
 
+                await page.waitForSelector('input[name="prenom"]', { visible: true, timeout: 10000 });
+                await page.type('input[name="prenom"]', player.firstName);
+                await page.type('input[name="nom"]', player.lastName);
+
+                // Submit button of the dialog (the page header has another "Rechercher")
+                await page.evaluate(() => {
+                    const searchBtns = Array.from(document.querySelectorAll('button'))
+                        .filter(b => (b.innerText || '').trim().toUpperCase() === 'RECHERCHER' && b.offsetWidth);
+                    searchBtns[searchBtns.length - 1].click();
+                });
+
+                // Ten'Up does not filter: it jumps to the page of the ranking that contains the player.
+                // The default page already has rows, so wait for the player's own row (or "no result").
                 try {
-                    await new Promise(r => setTimeout(r, 2000));
-                    // Wait for table OR "No results"
-                    await page.waitForFunction(() => {
-                        return document.querySelector('table tbody tr') || 
-                               document.body.innerText.includes('Aucun résultat') ||
-                               document.body.innerText.includes('Aucun joueur pour les filtres sélectionnés');
-                    }, { timeout: 8000 });
+                    await page.waitForFunction((target) => {
+                        const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+                        if (document.body.innerText.includes('Aucun joueur pour les filtres sélectionnés')) return true;
+                        return Array.from(document.querySelectorAll('table tbody tr td:nth-child(3)'))
+                            .some(td => norm(td.innerText) === target);
+                    }, { timeout: 15000 }, fullName);
                 } catch (e) {
                     console.log("Timed out waiting for results.");
+                    notUpdated.push(`${player.firstName} ${player.lastName}`);
                     continue;
                 }
 
-                // Check for "No results" explicitly
-                const noResults = await page.evaluate(() => 
-                    document.body.innerText.includes('Aucun résultat') ||
-                    document.body.innerText.includes('Aucun joueur pour les filtres sélectionnés')
-                );
-                if (noResults) {
-                    console.log(`❌ No results found for ${player.firstName} ${player.lastName} (Player may be private/hidden on Ten'Up)`);
-                    continue;
-                }
-
-                const result = await page.evaluate((pLast, pFirst) => {
-                    const rows = Array.from(document.querySelectorAll('table tbody tr'));
-                    for (const row of rows) {
+                const result = await page.evaluate((target) => {
+                    const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+                    // Columns: evolution | rank | name | points | actions
+                    for (const row of document.querySelectorAll('table tbody tr')) {
                         const cells = row.querySelectorAll('td');
-                        if (cells.length >= 4) {
-                            const nameText = cells[2].innerText.toLowerCase();
-                            // Lax check
-                            if (nameText.includes(pLast.toLowerCase())) {
-                                const rankText = cells[1].innerText.trim().replace(/\D/g, '');
-                                const pointsText = cells[3].innerText.trim().replace(',', '.');
-                                return {
-                                    rank: parseInt(rankText, 10),
-                                    points: parseFloat(pointsText)
-                                };
-                            }
+                        if (cells.length >= 4 && norm(cells[2].innerText) === target) {
+                            return {
+                                rank: parseInt(cells[1].innerText.replace(/\D/g, ''), 10),
+                                points: parseFloat(cells[3].innerText.replace(/\s/g, '').replace(',', '.'))
+                            };
                         }
                     }
                     return null;
-                }, player.lastName, player.firstName);
+                }, fullName);
 
                 if (result) {
                     console.log(`✅ Found: Rank ${result.rank}, Points ${result.points}`);
@@ -192,11 +157,13 @@ async function scrapeRankings() {
                     }
 
                 } else {
-                    console.log(`❌ Player ${player.firstName} ${player.lastName} not found (Name mismatch).`);
+                    console.log(`❌ No results found for ${player.firstName} ${player.lastName} (not ranked, name mismatch, or profile hidden as "Joueur anonyme" on Ten'Up)`);
+                    notUpdated.push(`${player.firstName} ${player.lastName}`);
                 }
 
             } catch (err) {
                 console.error(`❌ Error processing ${player.firstName}: ${err.message}`);
+                notUpdated.push(`${player.firstName} ${player.lastName}`);
             }
         }
 
@@ -204,11 +171,14 @@ async function scrapeRankings() {
         await browser.close();
     }
 
+    console.log(`\n📊 ${playersToScrape.length - notUpdated.length}/${playersToScrape.length} players updated.`);
+    if (notUpdated.length) console.log(`⚠️ Not updated: ${notUpdated.join(', ')}`);
+
     console.log('\n💾 Saving updated ranking data...');
-    
+
     // Format JSON carefully to maintain readability
     fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(rankingData, null, 4), 'utf8');
-    console.log('✅ data/ranking.json updated successfully!');
+    console.log('✅ data/ranking.json saved.');
 }
 
 scrapeRankings();
